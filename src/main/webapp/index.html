@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>快查-315快查物联网搜索引擎！</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/index.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+<div id="container">
+	<div id="bd">
+        <div id="main">
+        	<h1 class="title">
+            	<div class="logo large"><img src="img/logo.png" class="logoimg"/></div>
+            </h1>
+            <div class="nav ue-clear">
+            	<ul class="searchList">
+                    <li class="searchItem current">快查舆情</li>
+                    <li class="searchItem">物品识别码</li>
+					<li class="searchItem">网站安全查询</li>
+                   <li class="searchItem">网站备案查询</li>
+				   <li class="searchItem">二维码在线生成</li>
+                </ul>
+            </div>
+            <div class="inputArea">
+            	<input type="text" class="searchInput" id="keywords"/>
+                <input type="button" class="searchButton" id="search"/>
+                
+                <ul class="dataList">
+                	<li>搜索下拉1</li>
+                    <li>搜索下拉2</li>
+					<li>搜索下拉3</li>
+					<li>搜索下拉4</li>
+					<li>搜索下拉5</li>
+                </ul>
+            </div>
+            
+            <div class="historyArea">
+            	<p class="history">
+                	<label>热门搜索：</label>
+                    <a href="javascript:;">热门关键词1</a>
+                   <a href="javascript:;">热门关键词2</a>
+				   <a href="javascript:;">热门关键词3</a>
+                </p>
+                <p class="history">
+                	<label>我的历史搜索：</label>
+                    <a href="javascript:;">关键词1</a>
+                    <a href="javascript:;">关键词2</a>
+                    <a href="javascript:;">关键词3</a>
+                    <a href="javascript:;">关键词4</a>
+                </p>
+            </div>
+        </div><!-- End of main -->
+    </div><!--End of bd-->
+    
+    <div class="foot">
+    	<div class="wrap">
+            <div class="copyright">Copyright 2010-2016  版权所有:快查-315快查联盟   国家工业信息化部网站备案号：苏ICP备16010616号</div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/global.js"></script>
+<script type="text/javascript">
+	$('.searchList').on('click', '.searchItem', function(){
+		$('.searchList .searchItem').removeClass('current');
+		$(this).addClass('current');	
+	});
+	
+	// 联想下拉显示隐藏
+	$('.searchInput').on('focus', function(){
+		$('.dataList').show()
+    });
+	
+	// 联想下拉点击
+	$('.dataList').on('click', 'li', function(){
+		var text = $(this).text();
+		$('.searchInput').val(text);
+		$('.dataList').hide()
+	});
+
+    $("#search").click(function(){
+        var keywords = $("#keywords").val();
+        window.location.href = "/result.html?"+keywords;
+    })
+	
+	hideElement($('.dataList'), $('.searchInput'));
+</script>
+</html>

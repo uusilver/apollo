@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script src="http://cdn.bootcss.com/jquery/1.10.1/jquery.js"></script>
+<script>
+    $(function(){
+
+        $("#go").click(function(){
+            var keywords=$("#keywords").val();
+            $.post("search",{keywords:keywords},function(result){
+                var dataObj=eval("("+result+")");
+                var html = '';
+                for(var i= 0; i< dataObj.length; i++){
+                    html += "<a href='"+dataObj[i].url+"'>"+dataObj[i].title+"</a><br/>";
+
+                }
+                $("#result").html(html);
+            });
+        })
+    })
+</script>
+<body>
+<form action="search" method="post">
+    <input name="keywords" id="keywords" value="" placeholder="输入查询内容...." type="text"/>
+    <input type="button" value="搜索" id="go"/>
+</form>
+
+<div id="result">
+
+</div>
+</body>
+</html>

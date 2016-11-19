@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>关键词-快查-315快查物联网搜索引擎！</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="css/result.css" rel="stylesheet" type="text/css"/>
+
+</head>
+<body>
+<div id="container">
+    <div id="hd" class="ue-clear">
+        <div class="logo"><img src="img/logo1.png"/></div>
+        <div class="inputArea">
+            <input type="text" class="searchInput" value="关键词" id="keywords"/>
+            <input type="button" class="searchButton" id="search"/>
+
+        </div>
+    </div>
+    <div class="nav">
+        <ul class="searchList">
+            <li class="searchItem current">快查舆情</li>
+            <li class="searchItem">物品识别码</li>
+            <li class="searchItem">网站安全查询</li>
+            <li class="searchItem">网站备案查询</li>
+            <li class="searchItem">二维码在线生成</li>
+        </ul>
+        <a href="javascript:;" class="tips">关于快查搜索引擎</a>
+    </div>
+    <div id="bd" class="ue-clear">
+        <div id="main">
+            <div class="sideBar">
+
+
+                <div class="subfield">搜索引擎</div>
+                <ul class="subfieldContext">
+                    <li>
+                        <span class="name">百度搜索</span>
+                    </li>
+
+                    <li>
+                        <span class="name">360搜索</span>
+                    </li>
+                    <li>
+                        <span class="name">bing</span>
+                    </li>
+                    <li class="more">
+                        <a href="javascript:;">
+                            <span class="text">更多</span>
+                            <i class="moreIcon"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="subfield">您是不是要找</div>
+                <ul class="subfieldContext">
+                    <li>
+                        <span class="name">关键词1</span>
+                    </li>
+                    <li>
+                        <span class="name">关键词2</span>
+                    </li>
+                </ul>
+
+                <a href="javascript:;" class="reset">重置搜索选项</a>
+
+                <div class="sideBarShowHide">
+                    <a href="javascript:;" class="icon"></a>
+                </div>
+            </div>
+            <div class="resultArea">
+                <p class="resultTotal">
+                    <span class="info">找到约&nbsp;<span class="totalResult">2,608,495</span>&nbsp;条结果(用时<span
+                            class="time">0.36</span>秒)，共约<span class="totalPage">1900</span>页</span>
+                    <span class="orderOpt">
+                    	<a href="javascript:;" class="byTime">按收录时间排序</a>
+                        <a href="javascript:;" class="byDependence">按相关度排序</a>
+                    </span>
+                </p>
+
+                <div class="resultList" id="resultList">
+                    <!-- 查询结果显示区域-->
+                </div>
+                <!-- 分页 -->
+                <div class="pagination ue-clear"></div>
+                <!-- 相关搜索 -->
+                <div class="dependSearch ue-clear">
+                    <h6>相关搜索</h6>
+
+                    <div class="searchList">
+                        <p>
+                            <a href="javascript:;">关键词1</a>
+                            <a href="javascript:;">关键词1</a>
+                            <a href="javascript:;">关键词1</a>
+                            <a href="javascript:;">关键词1</a>
+                        </p>
+
+                        <p>
+                            <a href="javascript:;">关键词2</a>
+                            <a href="javascript:;">关键词2</a>
+                            <a href="javascript:;">关键词2</a>
+                            <a href="javascript:;">关键词2</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!--结果中搜索-->
+                <div class="inputArea searchInResult">
+                    <input type="text" class="searchInput"/>
+                    <input type="button" class="searchButton"/>
+                    <a class="inResult" javascript:;>重置搜索</a>
+                </div>
+            </div>
+            <div class="historyArea">
+                <div class="hotSearch">
+                    <h6>热门搜索</h6>
+                    <ul class="historyList">
+                        <li><a href="javascript:;">关键词1</a></li>
+                        <li><a href="javascript:;">关键词1</a></li>
+                        <li><a href="javascript:;">关键词1</a></li>
+                        <li><a href="javascript:;">关键词1</a></li>
+                        <li><a href="javascript:;">关键词1</a></li>
+                        <li><a href="javascript:;">关键词1</a></li>
+                        <li><a href="javascript:;">关键词1</a></li>
+                    </ul>
+                </div>
+                <div class="mySearch">
+                    <h6>我的搜索</h6>
+                    <ul class="historyList">
+                        <li><a href="javascript:;">关键词2</a></li>
+                        <li><a href="javascript:;">关键词2</a></li>
+                        <li><a href="javascript:;">关键词2</a></li>
+                        <li><a href="javascript:;">关键词2</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- End of main -->
+    </div>
+    <!--End of bd-->
+</div>
+
+<div id="foot">
+    <div class="copyright">Copyright 2010-2016 版权所有:快查-315快查联盟 国家工业信息化部网站备案号：苏ICP备16010616号</div>
+</div>
+</body>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/global.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript">
+    $('.searchList').on('click', '.searchItem', function () {
+        $('.searchList .searchItem').removeClass('current');
+        $(this).addClass('current');
+    });
+
+
+    $.each($('.subfieldContext'), function (i, item) {
+        $(this).find('li:gt(2)').hide().end().find('li:last').show();
+    });
+
+    $('.subfieldContext .more').click(function (e) {
+        var $more = $(this).parent('.subfieldContext').find('.more');
+        if ($more.hasClass('show')) {
+
+            if ($(this).hasClass('define')) {
+                $(this).parent('.subfieldContext').find('.more').removeClass('show').find('.text').text('自定义');
+            } else {
+                $(this).parent('.subfieldContext').find('.more').removeClass('show').find('.text').text('更多');
+            }
+            $(this).parent('.subfieldContext').find('li:gt(2)').hide().end().find('li:last').show();
+        } else {
+            $(this).parent('.subfieldContext').find('.more').addClass('show').find('.text').text('收起');
+            $(this).parent('.subfieldContext').find('li:gt(2)').show();
+        }
+
+    });
+
+    $('.sideBarShowHide a').click(function (e) {
+        if ($('#main').hasClass('sideBarHide')) {
+            $('#main').removeClass('sideBarHide');
+            $('#container').removeClass('sideBarHide');
+        } else {
+            $('#main').addClass('sideBarHide');
+            $('#container').addClass('sideBarHide');
+        }
+
+    });
+
+    //分页
+    $(".pagination").pagination(500, {
+        current_page: 0, //当前页码
+        items_per_page: 9,
+        display_msg: true,
+        callback: pageselectCallback
+    });
+    function pageselectCallback(page_id, jq) {
+        alert("当前页id(由0开始)：" + page_id + "，\n每页显示：" + this.items_per_page + "条数据");
+    }
+
+    setHeight();
+    $(window).resize(function () {
+        setHeight();
+    });
+
+    function setHeight() {
+        if ($('#container').outerHeight() < $(window).height()) {
+            $('#container').height($(window).height() - 33);
+        }
+    }
+</script>
+
+<script>
+    $(function(){
+        var keywords = window.location.href.split("?")[1];
+        if(keywords){
+            search(decodeURI(keywords), 0);
+        }
+
+        $("#search").click(function(){
+            var keywords=$("#keywords").val();
+            //TODO 获取当前页
+            search(keywords, 1);
+        })
+
+    })
+
+    function search(keywords, pageNo){
+
+        $.ajax({
+            url:'search',
+            type:"post",
+            data:{
+                keywords:keywords,
+                pageNo:pageNo
+            },
+            success:function(result) {
+                var dataObj=eval("("+result+")");
+                var html = '';
+                for(var i= 0; i< dataObj.length; i++){
+                    html += "<div class='resultItem'><div class='itemHead'>";
+                    html += " <a href='"+dataObj[i].url+"' target='_blank' class='title'>"+dataObj[i].title+"</a>";
+                    html += "</div>";
+                    html += "<div class='itemBody'>";
+                    html += dataObj[i].body_content
+                    html += "</div>";
+                    html += "<div class='itemFoot'> <span class='fileType'><span class='label'>搜索引擎：</span> <span class='value'>快查（315快查）</span></span>";
+                    html += "<span class='info'><label>收录时间：</label><span class='value'>"+dataObj[i].create_date+"</span> </span></div> </div>";
+
+                }
+                $("#resultList").html(html);
+
+            }
+        })//end of ajax call
+
+    }
+</script>
+</html>
