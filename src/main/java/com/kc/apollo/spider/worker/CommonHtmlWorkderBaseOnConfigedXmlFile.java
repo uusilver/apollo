@@ -1,5 +1,6 @@
 package com.kc.apollo.spider.worker;
 
+import com.kc.apollo.model.SpiderXmlBean;
 import com.kc.apollo.types.DBTypes;
 import com.kc.apollo.util.DBHelper;
 import com.kc.apollo.util.DataHelper;
@@ -21,30 +22,32 @@ import java.util.*;
 
 /**
  * Created by lijunying on 16/10/17.
+ * 根据定义好的XML文件，进行爬取工作的爬虫
  */
-public class ChinaQualityWebSiteWorker extends HtmlParentWorker {
+public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
 
-    Log logger = LogFactory.getLog(ChinaQualityWebSiteWorker.class);
+    Log logger = LogFactory.getLog(CommonHtmlWorkderBaseOnConfigedXmlFile.class);
 
-    private final String baseUrl = "http://www.chinatt315.org.cn/cpcc/listNews.aspx";
-    private final String baseUrlPrefix = "http://www.chinatt315.org.cn";
 
     @Override
-    public void retreveHyberLinkFromHtml(String baseHtmlAddress){
+    public void retreveHyberLinkFromHtml(SpiderXmlBean site){
         try {
-            Document document = Jsoup.connect(baseUrl).get();
-            Element element = document.getElementsByClass("particular").get(0);
+            Document document = Jsoup.connect(site.getBase()).get();
+            Element element = null;
+            if("class".equalsIgnoreCase(site.getLinks_tag())) {
+                 element = document.getElementsByClass(site.getLinks()).get(0);
+            }
             Elements hyberLinkElements = element.select("a");
             for (Element ele : hyberLinkElements) {
                 String urlPostFix = ele.attr("href");
-                if (!urlPostFix.startsWith("javascript")) {
+                if (!urlPostFix.startsWith("javascript")) { //去掉javascript的选项
                     //访问地址
-                    String urlAddress = baseUrlPrefix + urlPostFix;
+                    String urlAddress = site.getPrefix() + urlPostFix;
                     //访问主题
-                    String title = ele.attr("title");
+                    String title = ele.attr(site.getTitle());
                     //正文内容前100个字符
                     Document getBodyDocument = Jsoup.connect(urlAddress).get();
-                    String body = getBodyDocument.getElementsByTag("body").text();
+                    String body = getBodyDocument.getElementsByTag(site.getBody()).text();
                     if(body.length()>500){
                         body =body.substring(0,499);
                     }

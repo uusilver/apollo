@@ -1,5 +1,7 @@
 package com.kc.apollo.spider.worker;
 
+import com.kc.apollo.model.SpiderXmlBean;
+
 import java.io.IOException;
 
 /**
@@ -9,9 +11,10 @@ public interface HtmlWorker {
 
     /**
      * 从Html中抽取href标签
-     * @param baseHtmlAddress
+     * @See #com.kc.apollo.model.SpiderXmlBean
+     * @param site
      */
-    public void retreveHyberLinkFromHtml(String baseHtmlAddress) throws Exception;
+    public void retreveHyberLinkFromHtml(SpiderXmlBean site) throws Exception;
 
     /**检查输入url的合法性
      * 当为null时抛出{@link NullPointerException}时,

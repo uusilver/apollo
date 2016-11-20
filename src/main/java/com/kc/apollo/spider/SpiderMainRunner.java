@@ -1,12 +1,12 @@
 package com.kc.apollo.spider;
 
 
-import com.kc.apollo.model.SpiderTask;
-import com.kc.apollo.spider.worker.ChinaQualityWebSiteWorker;
+import com.kc.apollo.model.SpiderXmlBean;
+import com.kc.apollo.spider.config.SpiderConfigBuilder;
+import com.kc.apollo.spider.worker.CommonHtmlWorkderBaseOnConfigedXmlFile;
 import com.kc.apollo.spider.worker.HtmlWorker;
 
-import java.io.IOException;
-import java.util.concurrent.*;
+import java.util.List;
 
 /**
  * Created by lijunying on 16/10/6.
@@ -26,8 +26,15 @@ public class SpiderMainRunner {
 //
 //        service.shutdown();
 
-        HtmlWorker worker = new ChinaQualityWebSiteWorker();
-        worker.retreveHyberLinkFromHtml(null);
+        //获取所有的待爬去网站表
+        List<SpiderXmlBean> siteQueue =SpiderConfigBuilder.getConfig().getBeanList();
+        if(siteQueue == null)
+            throw new Exception("爬虫配置文件spider_config.xml配置有错误");
+
+        HtmlWorker worker = new CommonHtmlWorkderBaseOnConfigedXmlFile();
+        for(SpiderXmlBean site : siteQueue){
+            worker.retreveHyberLinkFromHtml(site);
+        }
 
     }
 

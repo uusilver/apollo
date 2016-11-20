@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.kc.apollo.model.SearchObject;
 import com.kc.apollo.model.SearchResult;
 import com.kc.apollo.util.DBUtil;
+import com.kc.apollo.util.WordSpliter;
 import org.ansj.domain.Term;
 import org.ansj.recognition.NatureRecognition;
 import org.ansj.splitWord.analysis.ToAnalysis;
@@ -43,9 +44,7 @@ public class SearchController {
         String keywords = searchObject.getKeywords();
         int pageNo = searchObject.getPageNo();
 
-        List<Term> termsList = null;
-        termsList = ToAnalysis.parse(keywords);
-        new NatureRecognition(termsList).recognition();
+        List<Term> termsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
 
         String[] strings = new String[termsList.size()];
         String questionMark = "";

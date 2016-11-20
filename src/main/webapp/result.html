@@ -217,12 +217,13 @@
         var keywords = window.location.href.split("?")[1];
         if(keywords){
             search(decodeURI(keywords), 0);
+            $("#keywords").val(decodeURI(keywords));
         }
 
         $("#search").click(function(){
             var keywords=$("#keywords").val();
             //TODO 获取当前页
-            search(keywords, 1);
+            search(keywords, 0);
         })
 
     })
