@@ -54,8 +54,6 @@ public class SearchController {
         }
         questionMark = questionMark.substring(0,questionMark.length()-1);
         System.out.println();
-        long end = System.currentTimeMillis();
-        logger.info("\""+keywords+"\"的分词解析耗时:" + (end - start)+"毫秒");
 
         int pageLimitStart = pageNo*pageSize;
         int pageLimitEnd = pageLimitStart+pageSize;
@@ -68,16 +66,38 @@ public class SearchController {
             ps.setString(i+1, strings[i]);
         }
         ResultSet rs = ps.executeQuery();
-        Set<SearchResult> set = new HashSet<SearchResult>();
+
+        SearchResult searchResult = new SearchResult();
+        Set<SearchResult.SearchItem> searchItemSet = new HashSet<SearchResult.SearchItem>();
         while (rs.next()){
-            SearchResult result = new SearchResult();
-            result.setTitle(rs.getString("full_text"));
-            result.setUrl(rs.getString("url_address"));
-            result.setCreate_date(rs.getTimestamp("create_date").toString());
-            result.setBody_content(rs.getString("body_content"));
-            set.add(result);
+            SearchResult.SearchItem item = new SearchResult.SearchItem();
+            item.setTitle(rs.getString("full_text"));
+            item.setUrl(rs.getString("url_address"));
+            item.setCreate_date(rs.getTimestamp("create_date").toString());
+            item.setBody_content(rs.getString("body_content"));
+            searchItemSet.add(item);
         }
-        return new Gson().toJson(set);
+        searchResult.setSearchItemSet(searchItemSet);
+
+        //结果集不包含条数才需要进行重新计算
+        if(searchObject.getTotalResult()==0) {
+            sql = "select count(uuid) as totalCount from apollo_invert_index where hot_word in(" + questionMark + ")";
+            ps = connection.prepareStatement(sql);
+            for(int i =0 ; i<strings.length; i++){
+                ps.setString(i+1, strings[i]);
+            }
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("totalCount");
+                searchResult.setTotalResult(count);
+            }
+        }
+        long end = System.currentTimeMillis();
+        long timeCost = end-start;
+        searchResult.setExecuteTime(timeCost);
+        logger.info("\""+keywords+"\"的分词解析耗时:" + timeCost+"毫秒");
+
+        return new Gson().toJson(searchResult);
 
     }
 }
