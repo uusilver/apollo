@@ -17,6 +17,7 @@ public class SearchResult {
         private String url;
         private String create_date;
         private String body_content;
+        private String source;
 
         public String getTitle() {
             return title;
@@ -48,6 +49,14 @@ public class SearchResult {
 
         public void setBody_content(String body_content) {
             this.body_content = body_content;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
         }
 
         @Override
@@ -90,4 +99,6 @@ public class SearchResult {
     public void setExecuteTime(long executeTime) {
         this.executeTime = executeTime;
     }
+
+
 }

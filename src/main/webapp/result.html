@@ -219,43 +219,47 @@
                 totalResult:totalCount
             },
             success:function(result) {
-                var dataObj=eval("("+result+")");
-                var html = '';
-                for(var i= 0; i< dataObj.searchItemSet.length; i++){
-                    html += "<div class='resultItem'><div class='itemHead'>";
-                    html += " <a href='"+dataObj.searchItemSet[i].url+"' target='_blank' class='title'>"+dataObj.searchItemSet[i].title+"</a>";
-                    html += "</div>";
-                    html += "<div class='itemBody'>";
-                    html += dataObj.searchItemSet[i].body_content
-                    html += "</div>";
-                    html += "<div class='itemFoot'> <span class='fileType'><span class='label'>搜索引擎：</span> <span class='value'>快查（315快查）</span></span>";
-                    html += "<span class='info'><label>收录时间：</label><span class='value'>"+dataObj.searchItemSet[i].create_date+"</span> </span></div> </div>";
-
-                }
-                $("#resultList").html(html);
-
-                //TODO 动态加载分页信息
-                $(".pagination").pagination(dataObj.totalResult, {
-                    current_page: 0, //当前页码
-                    items_per_page: 9,
-                    display_msg: true,
-                    callback: pageselectCallback
-                });
-                function pageselectCallback(page_id, jq) {
-//                    alert("当前页id(由0开始)：" + page_id + "，\n每页显示：" + this.items_per_page + "条数据");
-                      var keywords=$("#keywords").val();
-                      search(keywords, page_id, dataObj.totalResult);
-
-                }
-
-                //查询信息加载
-                $(".totalResult").text(dataObj.totalResult);
-                $(".time").text(dataObj.executeTime/1000);
+                loadInfoOnPage(result); //数据放在页面上
 
 
             }
         })//end of ajax call
 
+    }
+
+    function loadInfoOnPage(result){
+        var dataObj=eval("("+result+")");
+        var html = '';
+        for(var i= 0; i< dataObj.searchItemSet.length; i++){
+            html += "<div class='resultItem'><div class='itemHead'>";
+            html += " <a href='"+dataObj.searchItemSet[i].url+"' target='_blank' class='title'>"+dataObj.searchItemSet[i].title+"</a>";
+            html += "</div>";
+            html += "<div class='itemBody'>";
+            html += dataObj.searchItemSet[i].body_content
+            html += "</div>";
+            html += "<div class='itemFoot'> <span class='fileType'><span class='label'>搜索引擎：</span><span class='value'>"+dataObj.searchItemSet[i].source+"</span></span>";
+            html += "<span class='info'><label>收录时间：</label><span class='value'>"+dataObj.searchItemSet[i].create_date+"</span> </span></div> </div>";
+
+        }
+        $("#resultList").html(html);
+
+        //TODO 动态加载分页信息
+        $(".pagination").pagination(dataObj.totalResult, {
+            current_page: 0, //当前页码
+            items_per_page: 10,
+            display_msg: true,
+            callback: pageselectCallback
+        });
+        function pageselectCallback(page_id, jq) {
+//                    alert("当前页id(由0开始)：" + page_id + "，\n每页显示：" + this.items_per_page + "条数据");
+            var keywords=$("#keywords").val();
+            search(keywords, page_id, dataObj.totalResult);
+
+        }
+
+        //查询信息加载
+        $(".totalResult").text(dataObj.totalResult);
+        $(".time").text(dataObj.executeTime/1000);
     }
 </script>
 </html>

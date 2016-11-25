@@ -3,6 +3,7 @@ package com.kc.apollo;
 import com.google.gson.Gson;
 import com.kc.apollo.model.SearchObject;
 import com.kc.apollo.model.SearchResult;
+import com.kc.apollo.spider.fixer.BaiduRealTimeWorker;
 import com.kc.apollo.util.DBUtil;
 import com.kc.apollo.util.WordSpliter;
 import org.ansj.domain.Term;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,8 +40,8 @@ public class SearchController {
 
     @RequestMapping(value="/search",method = RequestMethod.POST)
     @ResponseBody
-    public String search(SearchObject searchObject) throws SQLException {
-        long start = System.currentTimeMillis();
+    public String search(SearchObject searchObject) throws SQLException, IOException {
+            long start = System.currentTimeMillis();
 
         String keywords = searchObject.getKeywords();
         int pageNo = searchObject.getPageNo();
@@ -75,6 +77,7 @@ public class SearchController {
             item.setUrl(rs.getString("url_address"));
             item.setCreate_date(rs.getTimestamp("create_date").toString());
             item.setBody_content(rs.getString("body_content"));
+            item.setSource("315快查");
             searchItemSet.add(item);
         }
         searchResult.setSearchItemSet(searchItemSet);
@@ -96,6 +99,12 @@ public class SearchController {
         long timeCost = end-start;
         searchResult.setExecuteTime(timeCost);
         logger.info("\""+keywords+"\"的分词解析耗时:" + timeCost+"毫秒");
+
+        //如果此处从315快查数据依然为空，我们则用fixer包下的搜索来进行结果替代
+        if(searchResult.getSearchItemSet()==null || searchResult.getSearchItemSet().size()== 0){
+            searchResult = new BaiduRealTimeWorker().baiduWorker(keywords);
+        }
+
 
         return new Gson().toJson(searchResult);
 
