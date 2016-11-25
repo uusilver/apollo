@@ -2,9 +2,9 @@
     <site>
         <base>http://www.chinatt315.org.cn/cpcc/listNews.aspx</base> <!--文章的列表-->
         <prefix>http://www.chinatt315.org.cn</prefix> <!--最终拼接URL结果的前缀-->
-        <links_tag>class</links_tag> <!--新闻列表的标签类型用于 如果是class则document.getElementsByClass-->
-        <links>particular</links>   <!--新闻列表具体属性值 particular-->
-        <title_tag>class</title_tag> <!--获取title的方式-->
+        <links_tag>css</links_tag> <!--新闻列表的标签类型用于 如果是class则document.getElementsByClass-->
+        <links>.particular</links>   <!--新闻列表具体属性值 css属性particular-->
+        <title_tag>attribute</title_tag> <!--获取title的方式-->
         <title>title</title> <!--获取title的方式-->
         <body_tag>tag</body_tag> <!--获取body的方式-->
         <body>body</body> <!--获取body的方式-->

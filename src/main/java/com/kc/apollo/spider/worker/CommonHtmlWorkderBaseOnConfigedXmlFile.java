@@ -34,9 +34,9 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
         try {
             Document document = Jsoup.connect(site.getBase()).get();
             Element element = null;
-            if("class".equalsIgnoreCase(site.getLinks_tag())) {
-                 element = document.getElementsByClass(site.getLinks()).get(0);
-            }
+            //根据css属性来选择
+            element = document.select(site.getLinks()).get(0);
+
             Elements hyberLinkElements = element.select("a");
             for (Element ele : hyberLinkElements) {
                 String urlPostFix = ele.attr("href");
@@ -47,6 +47,7 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
                     String title = ele.attr(site.getTitle());
                     //正文内容前100个字符
                     Document getBodyDocument = Jsoup.connect(urlAddress).get();
+                    //Body的内容
                     String body = getBodyDocument.getElementsByTag(site.getBody()).text();
                     if(body.length()>500){
                         body =body.substring(0,499);
