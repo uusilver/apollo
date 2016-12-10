@@ -15,8 +15,9 @@
     <div id="hd" class="ue-clear">
         <div class="logo"><img src="img/logo1.png"/></div>
         <div class="inputArea">
-            <input type="text" class="searchInput" value="关键词" id="keywords"/>
+            <input type="text" class="searchInput" placeholder="关键词" id="keywords"/>
             <input type="button" class="searchButton" id="search"/>
+
 
         </div>
     </div>
@@ -77,26 +78,7 @@
                 </div>
                 <!-- 分页 -->
                 <div class="pagination ue-clear"></div>
-                <!-- 相关搜索 -->
-                <!--<div class="dependSearch ue-clear">-->
-                    <!--<h6>相关搜索</h6>-->
 
-                    <!--<div class="searchList">-->
-                        <!--<p>-->
-                            <!--<a href="javascript:;">关键词1</a>-->
-                            <!--<a href="javascript:;">关键词1</a>-->
-                            <!--<a href="javascript:;">关键词1</a>-->
-                            <!--<a href="javascript:;">关键词1</a>-->
-                        <!--</p>-->
-
-                        <!--<p>-->
-                            <!--<a href="javascript:;">关键词2</a>-->
-                            <!--<a href="javascript:;">关键词2</a>-->
-                            <!--<a href="javascript:;">关键词2</a>-->
-                            <!--<a href="javascript:;">关键词2</a>-->
-                        <!--</p>-->
-                    <!--</div>-->
-                <!--</div>-->
 
                 <!--结果中搜索-->
                 <div class="inputArea searchInResult">
@@ -139,6 +121,8 @@
 </div>
 </body>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap-typehead.js"></script>
+
 <script type="text/javascript" src="js/global.js"></script>
 <script type="text/javascript" src="js/pagination.js"></script>
 <script type="text/javascript">
@@ -194,31 +178,42 @@
 </script>
 
 <script>
-    $(function(){
+    $(function () {
         var keywords = window.location.href.split("?")[1];
-        if(keywords){
+        if (keywords) {
             search(decodeURI(keywords), 0, 0);
             $("#keywords").val(decodeURI(keywords));
         }
 
-        $("#search").click(function(){
-            var keywords=$("#keywords").val();
+        $("#search").click(function () {
+            var keywords = $("#keywords").val();
             search(keywords, 0, 0);
         })
 
+        //Auto complete
+        $('#keywords').typeahead({
+            source: function (query, process) {
+                var parameter = {query: query};
+                $.post('/autoComplete', parameter, function (data) {
+                    process( eval("(" + data + ")"));
+                });
+            }
+        });
+
     })
 
-    function search(keywords, pageNo, totalCount){
+
+    function search(keywords, pageNo, totalCount) {
 
         $.ajax({
-            url:'search',
-            type:"post",
-            data:{
-                keywords:keywords,
-                pageNo:pageNo,
-                totalResult:totalCount
+            url: 'search',
+            type: "post",
+            data: {
+                keywords: keywords,
+                pageNo: pageNo,
+                totalResult: totalCount
             },
-            success:function(result) {
+            success: function (result) {
                 loadInfoOnPage(result); //数据放在页面上
 
 
@@ -227,18 +222,18 @@
 
     }
 
-    function loadInfoOnPage(result){
-        var dataObj=eval("("+result+")");
+    function loadInfoOnPage(result) {
+        var dataObj = eval("(" + result + ")");
         var html = '';
-        for(var i= 0; i< dataObj.searchItemSet.length; i++){
+        for (var i = 0; i < dataObj.searchItemSet.length; i++) {
             html += "<div class='resultItem'><div class='itemHead'>";
-            html += " <a href='"+dataObj.searchItemSet[i].url+"' target='_blank' class='title'>"+dataObj.searchItemSet[i].title+"</a>";
+            html += " <a href='" + dataObj.searchItemSet[i].url + "' target='_blank' class='title'>" + dataObj.searchItemSet[i].title + "</a>";
             html += "</div>";
             html += "<div class='itemBody'>";
             html += dataObj.searchItemSet[i].body_content
             html += "</div>";
-            html += "<div class='itemFoot'> <span class='fileType'><span class='label'>搜索引擎：</span><span class='value'>"+dataObj.searchItemSet[i].source+"</span></span>";
-            html += "<span class='info'><label>收录时间：</label><span class='value'>"+dataObj.searchItemSet[i].create_date+"</span> </span></div> </div>";
+            html += "<div class='itemFoot'> <span class='fileType'><span class='label'>搜索引擎：</span><span class='value'>" + dataObj.searchItemSet[i].source + "</span></span>";
+            html += "<span class='info'><label>收录时间：</label><span class='value'>" + dataObj.searchItemSet[i].create_date + "</span> </span></div> </div>";
 
         }
         $("#resultList").html(html);
@@ -252,14 +247,15 @@
         });
         function pageselectCallback(page_id, jq) {
 //                    alert("当前页id(由0开始)：" + page_id + "，\n每页显示：" + this.items_per_page + "条数据");
-            var keywords=$("#keywords").val();
+            var keywords = $("#keywords").val();
             search(keywords, page_id, dataObj.totalResult);
 
         }
 
         //查询信息加载
         $(".totalResult").text(dataObj.totalResult);
-        $(".time").text(dataObj.executeTime/1000);
+        $(".time").text(dataObj.executeTime / 1000);
+
     }
 </script>
 </html>

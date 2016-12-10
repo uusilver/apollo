@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.kc.apollo.model.SearchObject;
 import com.kc.apollo.model.SearchResult;
 import com.kc.apollo.spider.fixer.BaiduRealTimeWorker;
+import com.kc.apollo.types.DBTypes;
+import com.kc.apollo.util.DBHelper;
 import com.kc.apollo.util.DBUtil;
+import com.kc.apollo.util.DataHelper;
 import com.kc.apollo.util.WordSpliter;
 import org.ansj.domain.Term;
 import org.ansj.recognition.NatureRecognition;
@@ -22,10 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lijunying on 16/10/19.
@@ -36,7 +36,7 @@ public class SearchController {
     Log logger = LogFactory.getLog(SearchController.class);
 
     //TODO 从Properties文件中读取
-    private int pageSize = 10;
+    private final int pageSize = 10;
 
     @RequestMapping(value="/search",method = RequestMethod.POST)
     @ResponseBody
@@ -45,6 +45,11 @@ public class SearchController {
 
         String keywords = searchObject.getKeywords();
         int pageNo = searchObject.getPageNo();
+
+        //是否保存搜索结果
+        boolean saveSearchFlag = false;
+        //结果是否存在 在315快查的数据库内
+        String hasResult = "Y";
 
         List<Term> termsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
 
@@ -55,7 +60,6 @@ public class SearchController {
             questionMark+="?,";
         }
         questionMark = questionMark.substring(0,questionMark.length()-1);
-        System.out.println();
 
         int pageLimitStart = pageNo*pageSize;
         int pageLimitEnd = pageLimitStart+pageSize;
@@ -94,6 +98,8 @@ public class SearchController {
                 int count = rs.getInt("totalCount");
                 searchResult.setTotalResult(count);
             }
+
+            saveSearchFlag = true;
         }
         long end = System.currentTimeMillis();
         long timeCost = end-start;
@@ -103,10 +109,32 @@ public class SearchController {
         //如果此处从315快查数据依然为空，我们则用fixer包下的搜索来进行结果替代
         if(searchResult.getSearchItemSet()==null || searchResult.getSearchItemSet().size()== 0){
             searchResult = new BaiduRealTimeWorker().baiduWorker(keywords);
+
+            hasResult = "N";
         }
 
 
+        //将搜索词保存到数据库内
+        if(saveSearchFlag){
+            insertSearchKeyWordsIntoDatabse(keywords, hasResult);
+        }
+
         return new Gson().toJson(searchResult);
 
+    }
+
+
+    private void insertSearchKeyWordsIntoDatabse(String keywords, String resultFlag){
+        String sql1 = "insert into apollo_user_search_history (UUID, search_keywords, search_date, result_flag) values (?, ?, ?, ?)";
+
+        List<DBTypes> list = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.DATE, DBTypes.STRING);
+
+        Object[] objects = new Object[]{UUID.randomUUID().toString(), keywords,DataHelper.getCurrentTimeStamp(), resultFlag};
+
+        try {
+            DBHelper.getInstance().insertTable(sql1, list, objects);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
