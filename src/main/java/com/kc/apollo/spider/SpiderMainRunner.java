@@ -33,7 +33,7 @@ public class SpiderMainRunner {
 
         HtmlWorker worker = new CommonHtmlWorkderBaseOnConfigedXmlFile();
         for(SpiderXmlBean site : siteQueue){
-            worker.retreveHyberLinkFromHtml(site);
+            worker.retreveHyberLinkFromHtml(site.getBase(), site.getPrefix(), Integer.valueOf(site.getDepth()), 0);
         }
 
     }

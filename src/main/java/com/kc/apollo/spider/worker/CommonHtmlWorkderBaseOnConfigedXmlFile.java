@@ -30,57 +30,73 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
 
 
     @Override
-    public void retreveHyberLinkFromHtml(SpiderXmlBean site){
+    public void retreveHyberLinkFromHtml(String base, String prefix, int maxDepth, int currentDepth){
+        if(currentDepth == maxDepth)
+            return;
         try {
-            Document document = Jsoup.connect(site.getBase()).get();
-            Element element = null;
-            //根据css属性来选择
-            element = document.select(site.getLinks()).get(0);
-
-            Elements hyberLinkElements = element.select("a");
-            for (Element ele : hyberLinkElements) {
-                String urlPostFix = ele.attr("href");
-                if (!urlPostFix.startsWith("javascript")) { //去掉javascript的选项
-                    //访问地址
-                    String urlAddress = site.getPrefix() + urlPostFix;
-                    //访问主题
-                    String title = ele.attr(site.getTitle());
-                    //正文内容前100个字符
-                    Document getBodyDocument = Jsoup.connect(urlAddress).get();
-                    //Body的内容
-                    String body = getBodyDocument.getElementsByTag(site.getBody()).text();
-                    if(body.length()>500){
-                        body =body.substring(0,499);
-                    }
-
-                    String findSql = "select visited_url from apollo_visit_history where visited_url=?";
-                    List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
-                    Object[] queryCondition = new Object[]{urlAddress};
-                    if (!DBHelper.getInstance().isExistData(findSql, typeList, queryCondition)) { // 数据库不存在数据
-                        //将URL存入数据库
-                        String insertSql = "insert into apollo_visit_history (visited_url, date) values (?, ?)";
-                        List<DBTypes> insetTypelist = Arrays.asList(DBTypes.STRING, DBTypes.DATE);
-                        Object[] insertContent = new Object[]{urlAddress, DataHelper.getCurrentTimeStamp()};
-                        DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
-
-                        //将数据正式保存入数据库
-                        String persistIntoDb = "insert into apollo_html_content_collection " +
-                                "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content)" +
-                                "values (?,?,?,?,?,?,?,?,?,?)";
-                        List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
-                                DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
-                        Object[] values = new Object[]{UUID.randomUUID().toString(), title, urlAddress, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",body};
-                        DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
-                    }
+            Document document = Jsoup.connect(base).get();
+            //提取title
+            String title = document.getElementsByTag("title").get(0).text();
+            System.out.println(title);
+            //提取全部的href链接
+            Element body = document.body();
+            Elements allAEle =body.select("a");
+            for (Iterator it = allAEle.iterator(); it.hasNext();) {
+                Element e = (Element) it.next();
+                String link = e.attr("href");
+                //合法的内部链接
+                if(isInternalSiteUrlLinkValid(link)){
+                    retreveHyberLinkFromHtml(prefix+link, prefix, maxDepth, currentDepth+1);
                 }
+
             }
-            logger.info(DataHelper.getCurrentTimeStamp()+":"+"爬取任务完成");
+            //TODO 提取子站点body内容
+            //根据css属性来选择
+//            element = document.select(site.getLinks()).get(0);
+//
+//            Elements hyberLinkElements = element.select("a");
+//            for (Element ele : hyberLinkElements) {
+//                String urlPostFix = ele.attr("href");
+//                if (!urlPostFix.startsWith("javascript")) { //去掉javascript的选项
+//                    //访问地址
+//                    String urlAddress = site.getPrefix() + urlPostFix;
+//                    //访问主题
+//                    String title = ele.attr(site.getTitle());
+//                    //正文内容前100个字符
+//                    Document getBodyDocument = Jsoup.connect(urlAddress).get();
+//                    //Body的内容
+//                    String body = getBodyDocument.getElementsByTag(site.getBody()).text();
+//                    if(body.length()>500){
+//                        body =body.substring(0,499);
+//                    }
+//
+//                    String findSql = "select visited_url from apollo_visit_history where visited_url=?";
+//                    List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
+//                    Object[] queryCondition = new Object[]{urlAddress};
+//                    if (!DBHelper.getInstance().isExistData(findSql, typeList, queryCondition)) { // 数据库不存在数据
+//                        //将URL存入数据库
+//                        String insertSql = "insert into apollo_visit_history (visited_url, date) values (?, ?)";
+//                        List<DBTypes> insetTypelist = Arrays.asList(DBTypes.STRING, DBTypes.DATE);
+//                        Object[] insertContent = new Object[]{urlAddress, DataHelper.getCurrentTimeStamp()};
+//                        DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
+//
+//                        //将数据正式保存入数据库
+//                        String persistIntoDb = "insert into apollo_html_content_collection " +
+//                                "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content)" +
+//                                "values (?,?,?,?,?,?,?,?,?,?)";
+//                        List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
+//                                DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
+//                        Object[] values = new Object[]{UUID.randomUUID().toString(), title, urlAddress, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",body};
+//                        DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
+//                    }
+//                }
+//            }
+//            logger.info(DataHelper.getCurrentTimeStamp()+":"+"爬取任务完成");
         }catch (Exception e){
             logger.error("Error happened:"+e.getMessage());
         }
-
-
     }
+
 
     //TODO 暂时不提供，附件种类太过烦杂，需要更多的时间开发
     @Override

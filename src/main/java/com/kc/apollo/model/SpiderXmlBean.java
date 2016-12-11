@@ -23,6 +23,7 @@ public class SpiderXmlBean {
     private String title;
     private String body_tag;
     private String body;
+    private String depth;
 
     @XmlElement
     public String getBase() {
@@ -94,5 +95,14 @@ public class SpiderXmlBean {
 
     public void setLinks(String links) {
         this.links = links;
+    }
+
+    @XmlElement
+    public String getDepth() {
+        return depth;
+    }
+
+    public void setDepth(String depth) {
+        this.depth = depth;
     }
 }

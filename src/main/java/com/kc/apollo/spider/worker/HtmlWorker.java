@@ -12,9 +12,11 @@ public interface HtmlWorker {
     /**
      * 从Html中抽取href标签
      * @See #com.kc.apollo.model.SpiderXmlBean
-     * @param site
+     * @param base
+     * @Param: prefix
+     * @Param: depth
      */
-    public void retreveHyberLinkFromHtml(SpiderXmlBean site) throws Exception;
+    public void retreveHyberLinkFromHtml(String base, String prefix, int maxDepth, int currentDepth) throws Exception;
 
     /**检查输入url的合法性
      * 当为null时抛出{@link NullPointerException}时,
