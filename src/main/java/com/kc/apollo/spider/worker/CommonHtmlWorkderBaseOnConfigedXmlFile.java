@@ -37,9 +37,34 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
             Document document = Jsoup.connect(base).get();
             //提取title
             String title = document.getElementsByTag("title").get(0).text();
-            System.out.println(title);
             //提取全部的href链接
             Element body = document.body();
+            //获得body的前500个字
+            String bodyContent = body.text();
+            if(bodyContent.length()>500){
+                bodyContent =bodyContent.substring(0,499);
+            }
+            String findSql = "select visited_url from apollo_visit_history where visited_url=?";
+                    List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
+                    Object[] queryCondition = new Object[]{base};
+                    if (!DBHelper.getInstance().isExistData(findSql, typeList, queryCondition)) { // 数据库不存在数据
+                        //将URL存入数据库
+                        String insertSql = "insert into apollo_visit_history (visited_url, date) values (?, ?)";
+                        List<DBTypes> insetTypelist = Arrays.asList(DBTypes.STRING, DBTypes.DATE);
+                        Object[] insertContent = new Object[]{base, DataHelper.getCurrentTimeStamp()};
+                        DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
+
+                        //将数据正式保存入数据库
+                        String persistIntoDb = "insert into apollo_html_content_collection " +
+                                "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark)" +
+                                "values (?,?,?,?,?,?,?,?,?,?,?)";
+                        List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
+                                DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
+                        Object[] values = new Object[]{UUID.randomUUID().toString(), title, base, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",bodyContent, "website"};
+                        DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
+                        downloadRemoteFileAndPersist(base, prefix);
+                    }
+
             Elements allAEle =body.select("a");
             for (Iterator it = allAEle.iterator(); it.hasNext();) {
                 Element e = (Element) it.next();
@@ -50,48 +75,6 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
                 }
 
             }
-            //TODO 提取子站点body内容
-            //根据css属性来选择
-//            element = document.select(site.getLinks()).get(0);
-//
-//            Elements hyberLinkElements = element.select("a");
-//            for (Element ele : hyberLinkElements) {
-//                String urlPostFix = ele.attr("href");
-//                if (!urlPostFix.startsWith("javascript")) { //去掉javascript的选项
-//                    //访问地址
-//                    String urlAddress = site.getPrefix() + urlPostFix;
-//                    //访问主题
-//                    String title = ele.attr(site.getTitle());
-//                    //正文内容前100个字符
-//                    Document getBodyDocument = Jsoup.connect(urlAddress).get();
-//                    //Body的内容
-//                    String body = getBodyDocument.getElementsByTag(site.getBody()).text();
-//                    if(body.length()>500){
-//                        body =body.substring(0,499);
-//                    }
-//
-//                    String findSql = "select visited_url from apollo_visit_history where visited_url=?";
-//                    List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
-//                    Object[] queryCondition = new Object[]{urlAddress};
-//                    if (!DBHelper.getInstance().isExistData(findSql, typeList, queryCondition)) { // 数据库不存在数据
-//                        //将URL存入数据库
-//                        String insertSql = "insert into apollo_visit_history (visited_url, date) values (?, ?)";
-//                        List<DBTypes> insetTypelist = Arrays.asList(DBTypes.STRING, DBTypes.DATE);
-//                        Object[] insertContent = new Object[]{urlAddress, DataHelper.getCurrentTimeStamp()};
-//                        DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
-//
-//                        //将数据正式保存入数据库
-//                        String persistIntoDb = "insert into apollo_html_content_collection " +
-//                                "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content)" +
-//                                "values (?,?,?,?,?,?,?,?,?,?)";
-//                        List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
-//                                DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
-//                        Object[] values = new Object[]{UUID.randomUUID().toString(), title, urlAddress, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",body};
-//                        DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
-//                    }
-//                }
-//            }
-//            logger.info(DataHelper.getCurrentTimeStamp()+":"+"爬取任务完成");
         }catch (Exception e){
             logger.error("Error happened:"+e.getMessage());
         }
@@ -100,45 +83,69 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
 
     //TODO 暂时不提供，附件种类太过烦杂，需要更多的时间开发
     @Override
-    public void downloadRemoteFileAndPersist(String fileUrlAddress) throws Exception {
-        //将爬去的HTML链接放去数据库比较,如果有记录 则不再爬取，如果没有记录则爬取内容
-        String findSql = "select visited_url from apollo_visit_history where visited_url=?";
-        List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
-        Object[] queryCondition = new Object[]{fileUrlAddress};
-        if(!DBHelper.getInstance().isExistData(findSql, typeList, queryCondition)){ // 数据库不存在数据
-            //将URL存入数据库
-            String insertSql = "insert into apollo_visit_history (visited_url, date) values (?, ?)";
-            List<DBTypes> insetTypelist = Arrays.asList(DBTypes.STRING, DBTypes.DATE);
-            Object[] insertContent = new Object[]{fileUrlAddress, DataHelper.getCurrentTimeStamp()};
-            DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
+    public void downloadRemoteFileAndPersist(String fileUrlAddress, String prefix) {
+        try {
             //正式爬去数据
-            Document document = Jsoup.connect("http://www.chinatt315.org.cn/cpcc/2016-8/10/17722.aspx").get();
-            //选择 class=quicklink,下得a标签得href获取excel
-            String excelFileLink = document.getElementsByClass("quicklink").get(0).select("a").attr("href");
-            if(excelFileLink.endsWith("xls")){
-                //excel 2003
-                System.out.println(excelFileLink);
-                URL url = new URL(excelFileLink);
-                HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                //设置超时间为3秒
-                conn.setConnectTimeout(50*1000);
-                //防止屏蔽程序抓取而返回403错误
-                conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
-
-                //得到输入流
-                InputStream inputStream = conn.getInputStream();
-                String[][] result = getData(inputStream, 3);
-                for(String[] strings : result){
-                    for(String str : strings){
-                        System.out.print(str + " | ");
-                    }
-                    System.out.println("");
+            Document document = Jsoup.connect(fileUrlAddress).get();
+            Element body = document.body();
+            Elements allAEle = body.select("a");
+            for (Iterator it = allAEle.iterator(); it.hasNext(); ) {
+                Element e = (Element) it.next();
+                String link = e.attr("href");
+                //合法的内部链接
+                if (isInternalSiteUrlLinkValid(link)) {
+                    link = prefix + link;
                 }
 
-            }else{
-                //excel 2007
-                //TODO 未来添加支持
+                if (link.endsWith("xls")) {
+                    //excel 2003
+                    URL url = new URL(link);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    //设置超时间为3秒
+                    conn.setConnectTimeout(3 * 1000);
+                    //防止屏蔽程序抓取而返回403错误
+                    conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+
+                    //得到输入流
+                    InputStream inputStream = null;
+                    try{
+                        inputStream = conn.getInputStream();
+                        String[][] result = getData(inputStream, 3);
+                        for (String[] strings : result) {
+                            StringBuilder sb = new StringBuilder();
+                            for (String str : strings) {
+                                sb.append(str + " ");
+                            }
+                            //将数据正式保存入数据库
+                            String persistIntoDb = "insert into apollo_html_content_collection " +
+                                    "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark)" +
+                                    "values (?,?,?,?,?,?,?,?,?,?,?)";
+                            List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
+                                    DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,DBTypes.STRING);
+                            //标题为excel整行信息,不超过500个字,body现实文件链接名，Remark标记为excel文件
+                            String title = sb.toString();
+                            if(title.length()>500){
+                                title =title.substring(0,499);
+                            }
+                            String bodyContent = title+"<br/>"+link;
+                            Object[] values = new Object[]{UUID.randomUUID().toString(), title, fileUrlAddress, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",bodyContent, "excel"};
+                            DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
+
+                        }
+                    }catch (Exception e1){
+                        logger.error("解析Excel出错:"+e1.getMessage());
+                        return;
+                    }finally {
+                        inputStream.close();
+                        return;
+                    }
+                } else {
+                    //excel 2007
+                    //TODO 未来添加支持
+                }
             }
+        }catch (Exception e){
+            logger.warn("错误发生:"+e.getMessage());
         }
     }
 

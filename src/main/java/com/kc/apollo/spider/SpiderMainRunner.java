@@ -5,6 +5,8 @@ import com.kc.apollo.model.SpiderXmlBean;
 import com.kc.apollo.spider.config.SpiderConfigBuilder;
 import com.kc.apollo.spider.worker.CommonHtmlWorkderBaseOnConfigedXmlFile;
 import com.kc.apollo.spider.worker.HtmlWorker;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
  * Created by lijunying on 16/10/6.
  */
 public class SpiderMainRunner {
+
+    private static Log logger = LogFactory.getLog(SpiderMainRunner.class);
 
     //开启多现场执行
     public static void main(String args[]) throws Exception {
@@ -36,6 +40,7 @@ public class SpiderMainRunner {
             worker.retreveHyberLinkFromHtml(site.getBase(), site.getPrefix(), Integer.valueOf(site.getDepth()), 0);
         }
 
+        logger.info("爬虫爬取结束");
     }
 
 

@@ -30,5 +30,5 @@ public interface HtmlWorker {
      *
      * @param fileUrlAddress
      */
-    public void downloadRemoteFileAndPersist(String fileUrlAddress) throws Exception;
+    public void downloadRemoteFileAndPersist(String fileUrlAddress, String prefix) throws Exception;
 }

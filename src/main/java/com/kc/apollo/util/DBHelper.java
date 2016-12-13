@@ -37,7 +37,7 @@ public class DBHelper {
         if (types.size() != objects.length){
             throw new Exception("Types and Objects must have same number");
         }
-        logger.info("数据库执行插入操作:"+SqlStringFormater.formatSql(sql, objects));
+//        logger.info("数据库执行插入操作:"+SqlStringFormater.formatSql(sql, objects));
         Connection connection = null;
         PreparedStatement ps = null;
         try {
@@ -66,7 +66,7 @@ public class DBHelper {
         if (types.size() != objects.length){
             throw new Exception("Types and Objects must have same number");
         }
-        logger.info("数据库执行更新操作:"+SqlStringFormater.formatSql(sql, objects));
+//        logger.info("数据库执行更新操作:"+SqlStringFormater.formatSql(sql, objects));
         Connection connection = null;
         PreparedStatement ps = null;
         try {
@@ -85,7 +85,7 @@ public class DBHelper {
         if (types.size() != objects.length){
             throw new Exception("Types and Objects must have same number");
         }
-        logger.info("数据库执行查询操作:"+SqlStringFormater.formatSql(sql, objects));
+//        logger.info("数据库执行查询操作:"+SqlStringFormater.formatSql(sql, objects));
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -110,7 +110,7 @@ public class DBHelper {
      */
     public Object[][] loadApolloHtmlTableDataWithTop100(){
         String sql = "select uuid, title, original_url, body_content from apollo_html_content_collection where invert_index_flag='N' limit 100";
-        logger.info("数据库执行查询操作:"+sql);
+//        logger.info("数据库执行查询操作:"+sql);
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
