@@ -44,6 +44,22 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
             if(bodyContent.length()>500){
                 bodyContent =bodyContent.substring(0,499);
             }
+
+            String keywords = null;
+            String description = null;
+            Elements metas = document.head().select("meta");
+            for (Element meta : metas) {
+                String metaContent = meta.attr("content");
+                if ("keywords".equalsIgnoreCase(meta.attr("name"))) {
+                    keywords = metaContent;
+                }
+                if ("description".equalsIgnoreCase(meta.attr("name"))) {
+                    description = metaContent;
+                }
+            }
+
+            //TODO 保存keywords 和 description
+
             String findSql = "select visited_url from apollo_visit_history where visited_url=?";
                     List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
                     Object[] queryCondition = new Object[]{base};
@@ -55,12 +71,12 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
                         DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
 
                         //将数据正式保存入数据库
-                        String persistIntoDb = "insert into apollo_html_content_collection " +
-                                "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark)" +
-                                "values (?,?,?,?,?,?,?,?,?,?,?)";
+                        String persistIntoDb = "insert into apollo_html_content_collectil, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark,keywords,description)\" +\n" +
+                                "                                \"values (?,?,?,?,?,?,?,?,?on " +
+                                "(uuid, title, original_ur,?,?,?,?)";
                         List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
-                                DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
-                        Object[] values = new Object[]{UUID.randomUUID().toString(), title, base, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",bodyContent, "website"};
+                                DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
+                        Object[] values = new Object[]{UUID.randomUUID().toString(), title, base, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",bodyContent, "website",keywords,description};
                         DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
                         downloadRemoteFileAndPersist(base, prefix);
                     }
@@ -71,7 +87,11 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
                 String link = e.attr("href");
                 //合法的内部链接
                 if(isInternalSiteUrlLinkValid(link)){
+                    if(link.startsWith("."))
+                        link = link.substring(1,link.length());
                     retreveHyberLinkFromHtml(prefix+link, prefix, maxDepth, currentDepth+1);
+                }else if(link.startsWith("http") || link.startsWith("HTTP")) {
+                    retreveHyberLinkFromHtml(link, prefix, maxDepth, currentDepth+1);
                 }
 
             }

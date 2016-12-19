@@ -2,13 +2,17 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd">
 
 
     <context:component-scan base-package="com.kc.apollo"/>
-
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/"/>
@@ -30,6 +34,13 @@
         </property>
     </bean>
 
+    <!-- Spring定时器注解开关-->
+    <task:annotation-driven />
+    <!-- 此处对于定时时间的配置会被注解中的时间配置覆盖，因此，以注解配置为准 -->
+    <!--<task:scheduled-tasks scheduler="iScanScheduler">-->
+    <!--&lt;!&ndash;cron表达式：*(秒0-59) *(分钟0-59) *(小时0-23) *(日期1-31) *(月份1-12或是JAN-DEC) *(星期1-7或是SUN-SAT)  &ndash;&gt;-->
+    <!--<task:scheduled ref="iScanUserTask" method="secondScan" cron="1/2 * * * * *"/>-->
+    <!--</task:scheduled-tasks>-->
 
 
 </beans>

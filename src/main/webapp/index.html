@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!--<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>-->
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
@@ -10,6 +10,7 @@
 心已推出二维码防伪积分系统、防伪防窜货系统、渠道管理系统、二维码防伪溯源系统、微信扫码通等高端行业防伪解决方案，315快查物联网大数据搜索引擎。" />
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/index.css" rel="stylesheet" type="text/css" />
+<link href="css/bootstrap-typeahead.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
@@ -41,7 +42,7 @@
             <div class="inputArea">
             	<input type="text" class="searchInput"  style="color: #999999;" id="keywords" value="请输入品牌、产品名、企业名等关键词" onfocus="if(this.value=='请输入品牌、产品名、企业名等关键词')this.value=''" onblur="if(this.value=='')this.value="请输入品牌、产品名、企业名等关键词" />
                 <input type="button" class="searchButton" id="search"/>
-<div class="history">热点搜索：<a href="#">关键词1</a><a href="#">关键词2</a><a href="#">关键词3</a><a href="#">关键词4</a><a href="#">关键词5</a></div>
+				<div class="history">热点搜索：<span id="searchHotKeys"></span></div>
             </div>
         </div>
 		 <div class="news">
@@ -55,23 +56,8 @@
 	</div>
 
 	<div id="khxgd" class="kinfo">
-		<ul>
-			<li>
-				<div class="main1_r_l">
-					<div class="main1_r_bt"><a href="http://www.jsdaima.com">裘国根：“沪港通”与资本市场改革 </a> </div>
-					<div class="main1_r_nr">本文为重阳投资董事长裘国根在近期中国金融四十人“山东论坛”暨“深化经济体制改革的几个重点领域”内部研讨会上的发言，由中国金融四十人论...</div>
-				</div>
-				<div class="main1_r_r">2016-12-19<span>收录时间</span></div>
-				<div class="clear"></div>
-			</li>
-			<li>
-				<div class="main1_r_l">
-					<div class="main1_r_bt"><a href="http://www.jsdaima.com">裘国根：“沪港通”与资本市场改革 </a> </div>
-					<div class="main1_r_nr">本文为重阳投资董事长裘国根在近期中国金融四十人“山东论坛”暨“深化经济体制改革的几个重点领域”内部研讨会上的发言，由中国金融四十人论...</div>
-				</div>
-				<div class="main1_r_r">2016-12-19<span>收录时间</span></div>
-				<div class="clear"></div>
-			</li>
+		<ul id="news">
+
 		</ul>
 	</div>
 
@@ -143,6 +129,37 @@
         var keywords = $("#keywords").val();
         window.location.href = "/result.html?"+keywords;
     })
+
+	$.get("/news",function(data){
+		var dataObj = eval("(" + data + ")");
+		var html = '';
+		for (var i = 0; i < dataObj.length; i++) {
+			var content = dataObj[i].bodyContent;
+			if(content.length > 30){
+				content = content.substr(0, 29);
+			}
+			html += "<li>";
+			html +=	"<div class='main1_r_l'>";
+			html +=	"<div class='main1_r_bt'><a href='"+dataObj[i].url+"'>"+dataObj[i].keywords+" </a> </div>";
+			html += "<div class='main1_r_nr'>"+content+"</div>";
+			html += "</div>";
+			html +=  "<div class='main1_r_r'>"+dataObj[i].createDate+"<span>收录时间</span></div>";
+			html +=	 "<div class='clear'></div>";
+			html +=	"</li>";
+
+		}
+		$("#news").html(html);
+	});
+
+	$.get("/searchKey",function(data){
+		var html = '';
+		var dataObj = eval("(" + data + ")");
+		for (var i = 0; i < dataObj.length; i++) {
+			html += "<a href='/result.html?"+dataObj[i]+"'>"+dataObj[i]+"</a>";
+		}
+
+		$("#searchHotKeys").html(html);
+	});
 
     //Auto complete
     $('#keywords').typeahead({

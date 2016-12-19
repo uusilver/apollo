@@ -22,6 +22,6 @@ public class AutoCompleteController {
     @RequestMapping(value="/autoComplete",method = RequestMethod.POST)
     @ResponseBody
     public String search(String query) throws SQLException, IOException {
-        return new Gson().toJson(AutoCompleteCache.getListCache(query));
+        return new Gson().toJson(AutoCompleteCache.getInstance().getListCache(query));
     }
 }

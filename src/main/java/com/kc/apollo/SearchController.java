@@ -51,12 +51,12 @@ public class SearchController {
         //结果是否存在 在315快查的数据库内
         String hasResult = "Y";
 
-        List<Term> termsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
+        List<String> list = WordSpliter.getInstance().getWordListAfterSplit(keywords);
 
-        String[] strings = new String[termsList.size()];
+        String[] strings = new String[list.size()];
         String questionMark = "";
-        for (int i=0; i<termsList.size(); i++) {
-            strings[i] = termsList.get(i).getName();
+        for (int i=0; i<list.size(); i++) {
+            strings[i] = list.get(i);
             questionMark+="?,";
         }
         questionMark = questionMark.substring(0,questionMark.length()-1);
@@ -122,6 +122,7 @@ public class SearchController {
         return new Gson().toJson(searchResult);
 
     }
+
 
 
     private void insertSearchKeyWordsIntoDatabse(String keywords, String resultFlag){

@@ -3,10 +3,14 @@ package com.kc.apollo.index;
 import com.kc.apollo.types.DBTypes;
 import com.kc.apollo.util.DBHelper;
 import com.kc.apollo.util.DataHelper;
+import com.kc.apollo.util.FileUtils;
 import com.kc.apollo.util.WordSpliter;
 import org.ansj.domain.Term;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.crypto.Data;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -15,9 +19,9 @@ import java.util.*;
  */
 public class RevertIndex {
 
+    private  Log logger = LogFactory.getLog(RevertIndex.class);
 
-
-    public void revertIndex(Object[][] container) throws Exception {
+    private void revertIndex(Object[][] container) throws Exception {
         if(container == null)
             throw new NullPointerException("待索引内容不可为空");
 
@@ -28,12 +32,12 @@ public class RevertIndex {
                 String body_content = (String)row[3]; //正文预览
                 //数据有效
                 if(uuid!=null){
-                    List<Term> termList = WordSpliter.getInstance().getWordListAfterSplit(title);
+                    List<String> list = WordSpliter.getInstance().getWordListAfterSplit(title);
                 //解析title
                     //获取分词结果
                     try {
-                        for (Term term : termList) {
-                            String termContent = term.getName();
+                        for (String str : list) {
+                            String termContent = str;
                             //将分词结果保存进数据表
                             String insertSql = "insert into apollo_invert_index values(?,?,?,?,?,?)";
                             List<DBTypes> types = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,DBTypes.STRING,DBTypes.DATE, DBTypes.STRING);
@@ -53,19 +57,28 @@ public class RevertIndex {
                         List<DBTypes> list3 = Arrays.asList(DBTypes.STRING);
                         Object[] objects3= new Object[]{uuid};
                         DBHelper.getInstance().updateTable(sql3, list3, objects3);
+                        logger.error("解析反向索引出错");
                     }
-
                 }
 
             }
-
-
     }
 
-    public static void main(String[] args) throws Exception {
-        RevertIndex revertIndex = new RevertIndex();
-        Object[][] result = DBHelper.getInstance().loadApolloHtmlTableDataWithTop100();
-        revertIndex.revertIndex(result);
+    public void revertIndexRunner(){
+        try {
+            //创建标志文件
+            FileUtils.createFile("RevertIndex.run");
+
+            RevertIndex revertIndex = new RevertIndex();
+            Object[][] result = DBHelper.getInstance().loadApolloHtmlTableDataWithTop100();
+            revertIndex.revertIndex(result);
+            logger.info("反向索引建立完毕");
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }finally {
+            FileUtils.delectFile("RevertIndex.run");
+        }
+
     }
 
 }

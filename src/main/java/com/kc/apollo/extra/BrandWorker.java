@@ -1,4 +1,4 @@
-package com.kc.apollo.brand;
+package com.kc.apollo.extra;
 
 import com.kc.apollo.types.DBTypes;
 import com.kc.apollo.util.DBHelper;
@@ -8,7 +8,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -17,18 +16,30 @@ import java.util.UUID;
  * Created by lijunying on 16/12/14.
  */
 public class BrandWorker {
-    static  int index = 1;
     public static void main(String args[]) {
+            String s[] = new String[]{"i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","shu"};
+            Integer i[] = new Integer[]{1,7,5,8,7,2,2,2,4,2,9,5,1,1,4,6,10,5,1};
+            if(s.length == i.length){
+                for(int index=0; index<s.length;index++){
+                    canSub(s[index], i[index]);
+                }
+            }
+        System.out.println("Done");
+    }
+
+    private static void canSub(String midFix, int num){
         String brandName = "未知";
         String companyName = "未知";
         String nextLink = null;
         try {
-            int a = 5;
+            int a = num;
             for (int i = 1; i <= a; i++) {
                 /*
-                    Done: a,
+                    Done: a,b,c,d,e,f,g
+                          h
+
                  */
-                String site = "http://i.paizi.com/dp-a-" + a;
+                String site = "http://i.paizi.com/dp-"+midFix+"-" + a;
                 Document document = Jsoup.connect(site).timeout(5000).get();
                 Elements elements = document.select("ul > li");
 
@@ -64,7 +75,6 @@ public class BrandWorker {
                     //TODO
                     if (brandName!=null && companyName != null) {
                         System.out.println(brandName + " : " + companyName);
-                        index++;
 
                         String sql1 = "insert into apollo_brand_company_collection (uuid, brand_name, brand_company, source, active_flag, create_date) values (?, ?, ?, ?, ?, ?)";
 
@@ -76,7 +86,6 @@ public class BrandWorker {
                     }
                 }
             }
-            System.out.println("总数:" + index);
         }catch(Exception e){
             System.out.println(e.getMessage()+":"+brandName +" "+ nextLink);
         }
