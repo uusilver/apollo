@@ -310,11 +310,9 @@
     $(function () {
         //广告区域
         var keywords = window.location.href.split("?")[1];
-        if(decodeURI(keywords) === "老泥池"){
-            $("#lnc").css('display','block');
-        }else{
-            $("#lnc").css('display','none');
-        }
+        adSwitch(decodeURI(keywords));
+
+
         if (keywords) {
             search(decodeURI(keywords), 0, 0);
             $("#keywords").val(decodeURI(keywords));
@@ -322,11 +320,7 @@
 
         $("#search").click(function () {
             var keywords = $("#keywords").val();
-            if(keywords == "老泥池"){
-                $("#lnc").css('display','block');
-            }else{
-                $("#lnc").css('display','none');
-            }
+            adSwitch(keywords);
             search(keywords, 0, 0);
         })
 
@@ -340,7 +334,15 @@
             }
         });
 
-    })
+    });
+
+    function adSwitch(keywords){
+        if(keywords == "老泥池"){
+            $("#lnc").css('display','block');
+        }else{
+            $("#lnc").css('display','none');
+        }
+    }
 
 
     function search(keywords, pageNo, totalCount) {
