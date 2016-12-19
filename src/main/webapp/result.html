@@ -83,8 +83,7 @@
                     <div class="resultItem">
                         <div>
                             <link href="pinpai/a01/laonichi.css" rel="stylesheet" type="text/css"/>
-
-                            <div id="m274a7a46">
+                            <div id="lnc" style="display: none">
                                 <div class="wppn5w6" data-time="1472626871221">
                                     <div class="rolje0e rolje0e-0" id="w-3y6oiw">
                                         <div class="lxrvgut lxrvgut-h1">
@@ -309,7 +308,13 @@
 
 <script>
     $(function () {
+        //广告区域
         var keywords = window.location.href.split("?")[1];
+        if(decodeURI(keywords) === "老泥池"){
+            $("#lnc").css('display','block');
+        }else{
+            $("#lnc").css('display','none');
+        }
         if (keywords) {
             search(decodeURI(keywords), 0, 0);
             $("#keywords").val(decodeURI(keywords));
@@ -317,6 +322,11 @@
 
         $("#search").click(function () {
             var keywords = $("#keywords").val();
+            if(keywords == "老泥池"){
+                $("#lnc").css('display','block');
+            }else{
+                $("#lnc").css('display','none');
+            }
             search(keywords, 0, 0);
         })
 
