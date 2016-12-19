@@ -59,7 +59,7 @@ html{*overflow:auto;}
 /*搜索结果列表区域*/
 .resultArea .resultList{padding-left:30px;}
 .resultArea .resultList .resultItem{margin-bottom:20px;}
-.resultArea .resultList .resultItem{margin-bottom:30px;}
+.resultArea .resultList .resultItem2{margin-bottom:30px;}
 .resultArea .resultList .itemHead{margin-bottom:5px;color:#767676;} 
 .resultArea .resultList .itemHead .keyWord{color:#d90909;}
 .resultArea .resultList .itemBody .keyWord{color:#d90909;}
