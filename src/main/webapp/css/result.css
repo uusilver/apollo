@@ -2,28 +2,30 @@
 html{*overflow:auto;}
 #hd{padding:20px 10px;}
 #bd{margin-bottom:40px;}
-.logo{float:left;margin-right:30px; height:33px;}
+.head{position:fixed;width:100%; height:85px; top:0; background-color:#FFF; left: 0;}
+.logo1{float:left;margin-right:30px; height:33px;}
 /*input搜索区域*/
 .inputArea{float:left;position:relative;}
-.inputArea .searchInput{border:1px solid #bfbfbf;padding:0 15px;outline:none;height:35px;*line-height:35px;width:350px; background:url(../img/inputbg.png);font-size:14px;}
+.inputArea .searchInput{border:1px solid #bfbfbf;padding:0 10px;outline:none;height:35px;*line-height:35px;width:350px; background:url(../img/inputbg.png);font-size:14px;}
 .inputArea .searchButton{position:absolute;left:382px;top:0;*top:1px;*left:381px;width:106px;height:38px;background:url(../img/btn_min.png) no-repeat;border:none;cursor:pointer;}
 
 /*返回高级搜索*/
 .inputArea .advanced{position:absolute;font-size:14px;left:500px;top:12px;width:60px;text-decoration:underline;}
 
 /*分界区域，导航*/
-.nav{margin-bottom:24px;height:31px;background:#f9f9f9;border-bottom:1px solid #e0e0e0;padding:5px 0 0 210px;}
+.nav{margin-bottom:24px;height:6px;background:#f9f9f9;border-bottom:1px solid #e0e0e0;padding:0px 0 0 210px;}
 .searchList{float:left;padding-left:5px;}
 .searchList .searchItem{float:left;margin-right:15px;font-size:14px;padding:0 3px 2px 3px;cursor:pointer;height:26px; line-height:26px;}
 .searchList .searchItem.current{color:#0080cc;border-bottom:3px solid #E10515;font-weight:bold;}
 .nav .tips{color:#969696;font-size:12px;line-height:24px;*line-height:26px;}
+#container{ margin-top:100px;}
 #container.sideBarHide .nav{padding-left:35px;}
 
 /*#main区域样式*/
 #main{padding:0 215px 0 182px;}
 #main.sideBarHide{padding-left:10px;}
 /*侧边栏搜索条件*/
-.sideBar{position:relative;float:left;margin-left:-182px;width:182px;}
+.sideBar{float:left;margin-left:-182px;width:182px;}
 .sideBar .subfieldContext{margin-bottom:20px;padding-left:25px;}
 .sideBar .subfieldContext li{margin-bottom:5px;cursor:pointer;}
 .sideBar .subfieldContext input[type=text]{width:75px;}
@@ -31,7 +33,7 @@ html{*overflow:auto;}
 
 /*更多按钮*/
 .sideBar .more a:hover{text-decoration:none;}
-.sideBar .more .moreIcon{display:inline-block;position:relative;top:-1px;*top:-3px;left:2px;*left:-1px;width:9px;height:5px;background:url(../img/more.png);}
+.sideBar .more .moreIcon{display:inline-block;top:-1px;*top:-3px;left:2px;*left:-1px;width:9px;height:5px;background:url(../img/more.png);}
 .sideBar .more.show .moreIcon{background:url(../img/down.png);top:-2px;}
 
 .sideBar .reset{padding-left:25px;}
@@ -48,8 +50,8 @@ html{*overflow:auto;}
 #main.sideBarHide .sideBar .sideBarShowHide a:hover{*background-position:0 -31px;}
 #main.sideBarHide .sideBar .sideBarShowHide{background:none;}
 
-.resultArea{float:left;width:100%;}
-.resultArea .resultTotal{position:relative;padding-left:30px;margin-bottom:20px;}
+.resultArea{float:left;width:90%;}
+.resultArea .resultTotal{position:relative;z-index:-1;padding-left:30px;margin-bottom:8px;}
 .resultArea .resultTotal .info{color:#9a9a9a;}
 .resultArea .resultTotal .orderOpt{position:absolute;right:50px;}
 .resultArea .resultTotal .orderOpt a{margin-right:10px;color:#0080cc;}
@@ -67,7 +69,7 @@ html{*overflow:auto;}
 .resultArea .resultList .itemHead .fileType{margin-right:10px;}
 
 /*搜索内容主体*/
-.resultArea .resultList .itemBody{margin-bottom:5px;line-height:18px;width:90%;}
+.resultArea .resultList .itemBody{margin-bottom:5px;line-height:18px;width:85%;}
 .resultArea .resultList .itemFoot{color:#008000;}
 .resultArea .resultList .itemFoot .info{margin-right:10px;}
 
@@ -81,11 +83,11 @@ html{*overflow:auto;}
 .resultArea .searchInResult .inResult{position:absolute;right:-190px;top:8px;font-size:14px;text-decoration:underline;}
 .resultArea .searchInResult .searchButton{left:417px;}
 /*历史搜索区域*/
-.historyArea{float:right;margin-right:-212px;width:212px;}
+.historyArea{float:right;margin-right:-212px;width:272px;}
 .historyArea h6{margin-bottom:10px;font-weight:bold;}
 .historyArea .historyList{margin-bottom:20px;}
 .historyArea .historyList li{margin-bottom:5px;}
-
+.jiangjie{ color:#0080CC;}
 
 
 /*左侧分栏区域*/
@@ -102,3 +104,10 @@ html{*overflow:auto;}
 .inputArea .dataList li:hover{background:#f0f0f0;color:#0080cc;font-weight:bold;}
 
 
+/*版权信息*/
+.foot{bottom:0px;width:100%; clear:both;}
+.foot .wrap{margin:0 auto;color:#939595;}
+.foot .wrap2{clear:both;width:100%;height:70px;text-align:center;  line-height:20px;}
+.foot .wrap2 a{ color:#939595;}
+.foot .wrap3{ width:400px;clear:both;margin:0 auto; padding-top:25px; text-align:center;}
+.foot .wrap3 a{ display:block; float:left; margin:0px 5px;text-align:center;}

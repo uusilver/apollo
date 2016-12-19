@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>开放平台【快查-315快查】物联网大数据搜索引擎！【联盟官网】</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="css/result.css" rel="stylesheet" type="text/css"/>
+    <link href="css/neirong.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="head">
+<div id="hd" class="ue-clear">
+        <div class="logo1"><img src="img/logo1.png"/></div>
+        <div class="inputArea">
+            <input type="text" class="searchInput"  style="color: #999999;" id="keywords" value="请输入品牌、产品名、企业名等关键词" onfocus="if(this.value=='请输入品牌、产品名、企业名等关键词')this.value=''" onblur="if(this.value=='')this.value="请输入品牌、产品名、企业名等关键词" />
+            <input type="button" class="searchButton" id="search"/>
+
+
+        </div>
+    </div>
+    <div class="nav">
+  
+    </div>
+</div>
+
+<div class="mianze-head">
+		<div class="mianze-menu">
+			<a href="http://www.315kc.com">315快查首页</a><span>&gt;</span>开放平台
+		</div>
+	</div>
+<div class="mainze-content">
+		<div class="AreaR">
+    <div class="box">
+      <div class="box_1">
+        <div style="border:4px solid #fcf8f7; background-color:#fff; padding:20px 15px;">
+          
+                    <p><span style="text-indent: 28pt; font-family: 宋体; line-height: 150%; font-size: 12pt;"></span><span style="text-indent: 28pt; font-family: 宋体; line-height: 150%; font-size: 12pt;">【315快查】数据开放平台，目前正免费开放收录优质站点资源。您可以第一时间提交企业或者网站，将最直接的数据，以清晰明确的方式，展现在目标用户面前。同时向开发者开放了业界最领先、最实时、最稳定的数据分析平台，让开发者随时随地更懂应用发展趋势，全面倾听用户“心声”，助力精细化运营，辅助决策，明晰产品迭代方向。<br/>
+<br/>
+【315快查】每天响应网民数亿次搜索请求，是亿万中国网民注意力的汇聚与发散平台。315快查指数专业版是在315快查海量搜索用户行为和搜索需求分析的基础上，构建出的一套市场需求监测、搜索人群洞察、媒介选择、广告投放、效果评估以及品牌舆情监测的系统化工具，是真正能与广告主营销需求形成对接的数据服务平台。基于对中国4.5亿网民搜索行为的深刻解析，315快查指数专业版能实时、客观、全面地洞察目标人群的消费意愿、行为与兴趣特征。从把握行业与品牌竞争态势，到策划推广方案、广告投放建议，再到投放之后的效果衡量和媒体舆情，315快查指数专业版都能为您提供相应的数据支持方案。 “营销决策，知而后行”，315快查数据研究，成就您的商业价值。</span></p>
+                          
+        </div>
+      </div>
+    </div>
+    <div class="blank"></div>
+ </div>
+	</div>
+
+<div class="foot">
+    	<div class="wrap">
+            <div class="wrap2">
+			<div class="wrap3">
+<a href="guanyu.html" style="cursor:pointer;">关于我们</a><a href="jieshao.html">搜索引擎介绍</a><a href="mianze.html">免责声明</a><a href="shangwu.html">商务合作</a><a href="kaifang.html">开放平台</a><a href="yijian.html">意见反馈</a>
+</div>
+    <div style="clear:both;">Copyright 2010-2017&nbsp;&nbsp;315快查搜索服务&nbsp;&nbsp;国家工业信息化部网站备案号：<a href="http://www.miitbeian.gov.cn/" target="_blank">苏ICP备16010616号</a>
+</div>
+</div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap-typehead.js"></script>
+
+<script type="text/javascript" src="js/global.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript">
+    $('.searchList').on('click', '.searchItem', function () {
+        $('.searchList .searchItem').removeClass('current');
+        $(this).addClass('current');
+    });
+
+
+    $.each($('.subfieldContext'), function (i, item) {
+        $(this).find('li:gt(2)').hide().end().find('li:last').show();
+    });
+
+    $('.subfieldContext .more').click(function (e) {
+        var $more = $(this).parent('.subfieldContext').find('.more');
+        if ($more.hasClass('show')) {
+
+            if ($(this).hasClass('define')) {
+                $(this).parent('.subfieldContext').find('.more').removeClass('show').find('.text').text('自定义');
+            } else {
+                $(this).parent('.subfieldContext').find('.more').removeClass('show').find('.text').text('更多');
+            }
+            $(this).parent('.subfieldContext').find('li:gt(2)').hide().end().find('li:last').show();
+        } else {
+            $(this).parent('.subfieldContext').find('.more').addClass('show').find('.text').text('收起');
+            $(this).parent('.subfieldContext').find('li:gt(2)').show();
+        }
+
+    });
+
+    $('.sideBarShowHide a').click(function (e) {
+        if ($('#main').hasClass('sideBarHide')) {
+            $('#main').removeClass('sideBarHide');
+            $('#container').removeClass('sideBarHide');
+        } else {
+            $('#main').addClass('sideBarHide');
+            $('#container').addClass('sideBarHide');
+        }
+
+    });
+
+
+    setHeight();
+    $(window).resize(function () {
+        setHeight();
+    });
+
+    function setHeight() {
+        if ($('#container').outerHeight() < $(window).height()) {
+            $('#container').height($(window).height() - 33);
+        }
+    }
+</script>
+
+<script>
+    $(function () {
+        var keywords = window.location.href.split("?")[1];
+        if (keywords) {
+            search(decodeURI(keywords), 0, 0);
+            $("#keywords").val(decodeURI(keywords));
+        }
+
+        $("#search").click(function () {
+            var keywords = $("#keywords").val();
+            search(keywords, 0, 0);
+        })
+
+        //Auto complete
+        $('#keywords').typeahead({
+            source: function (query, process) {
+                var parameter = {query: query};
+                $.post('/autoComplete', parameter, function (data) {
+                    process( eval("(" + data + ")"));
+                });
+            }
+        });
+
+    })
+
+
+    function search(keywords, pageNo, totalCount) {
+
+        $.ajax({
+            url: 'search',
+            type: "post",
+            data: {
+                keywords: keywords,
+                pageNo: pageNo,
+                totalResult: totalCount
+            },
+            success: function (result) {
+                loadInfoOnPage(result); //数据放在页面上
+
+
+            }
+        })//end of ajax call
+
+    }
+
+    function loadInfoOnPage(result) {
+        var dataObj = eval("(" + result + ")");
+        var html = '';
+        for (var i = 0; i < dataObj.searchItemSet.length; i++) {
+            html += "<div class='resultItem'><div class='itemHead'>";
+            html += " <a href='" + dataObj.searchItemSet[i].url + "' target='_blank' class='title'>" + dataObj.searchItemSet[i].title + "</a>";
+            html += "</div>";
+            html += "<div class='itemBody'>";
+            html += dataObj.searchItemSet[i].body_content
+            html += "</div>";
+            html += "<div class='itemFoot'> <span class='fileType'><span class='label'>搜索引擎：</span><span class='value'>" + dataObj.searchItemSet[i].source + "</span></span>";
+            html += "<span class='info'><label>收录时间：</label><span class='value'>" + dataObj.searchItemSet[i].create_date + "</span> </span></div> </div>";
+
+        }
+        $("#resultList").html(html);
+
+        //TODO 动态加载分页信息
+        $(".pagination").pagination(dataObj.totalResult, {
+            current_page: 0, //当前页码
+            items_per_page: 10,
+            display_msg: true,
+            callback: pageselectCallback
+        });
+        function pageselectCallback(page_id, jq) {
+//                    alert("当前页id(由0开始)：" + page_id + "，\n每页显示：" + this.items_per_page + "条数据");
+            var keywords = $("#keywords").val();
+            search(keywords, page_id, dataObj.totalResult);
+
+        }
+
+        //查询信息加载
+        $(".totalResult").text(dataObj.totalResult);
+        $(".time").text(dataObj.executeTime / 1000);
+
+    }
+</script>
+</html>

@@ -38,9 +38,8 @@ dl, dt, dd, ol, ul, li{ list-style:none;}
 a{color:#0080cc;}
 a:hover{color:#267A01;text-decoration:underline;}
 /*logo样式*/
-.logo{width:auto;height:243px;padding:0 5px; margin:0px auto;}
-.logoimg{width:300px; height:243px; margin:0px auto; display:block;}
-
+.logo{width:auto;height:122px;padding:0 5px; margin:0px auto 0px 230px;}
+.logo img{width:209px; height:73px; display:block;}
 /*choose样式*/
 .choose{float:left;margin-right:15px;white-space:nowrap;}
 .choose .text{float:left;padding-left:20px;*padding-left:16px;white-space:nowrap; vertical-align:text-bottom;}
@@ -63,6 +62,6 @@ a:hover{color:#267A01;text-decoration:underline;}
 .pagination .current.prev, .pagination .current.next{color:#B9B9B9;border-color:#D3D3D3;background:#fff;}
 .pagination .pxofy{color: #023054;}
 
-#foot{height:32px;line-height:32px; text-align:center;background:#f9f9f9;border-top:1px solid #e0e0e0;color:#ababab;}
+
 
 
