@@ -9,6 +9,7 @@
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
     <link href="css/result.css" rel="stylesheet" type="text/css"/>
     <link href="css/bootstrap-typeahead.css" rel="stylesheet" type="text/css" />
+    <link href="css/showLoading.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
@@ -253,6 +254,7 @@
 
 <script type="text/javascript" src="js/global.js"></script>
 <script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript" src="js/jquery.showLoading.min.js"></script>
 <script type="text/javascript">
     $('.searchList').on('click', '.searchItem', function () {
         $('.searchList .searchItem').removeClass('current');
@@ -341,7 +343,7 @@
     }
 
     function search(keywords, pageNo, totalCount) {
-
+        $("#resultList").showLoading();
         $.ajax({
             url: 'search',
             type: "post",
@@ -352,8 +354,7 @@
             },
             success: function (result) {
                 loadInfoOnPage(result); //数据放在页面上
-
-
+                $("#resultList").hideLoading();
             }
         })//end of ajax call
 
