@@ -85,14 +85,14 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
             for (Iterator it = allAEle.iterator(); it.hasNext();) {
                 Element e = (Element) it.next();
                 String link = e.attr("href");
+
                 //合法的内部链接
-                if(isInternalSiteUrlLinkValid(link)){
-                    if(link.startsWith("."))
-                        link = link.substring(1,link.length());
-                    retreveHyberLinkFromHtml(prefix+link, prefix, maxDepth, currentDepth+1);
-                }else if(link.startsWith("http") || link.startsWith("HTTP")) {
-                    retreveHyberLinkFromHtml(link, prefix, maxDepth, currentDepth+1);
+                if(isInternalSiteUrlLinkValid(link)) {
+                    link = e.attr("abs:href");
                 }
+                
+                retreveHyberLinkFromHtml(link, prefix, maxDepth, currentDepth+1);
+
 
             }
         }catch (Exception e){

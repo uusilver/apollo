@@ -70,8 +70,14 @@ public class RevertIndex {
             FileUtils.createFile("RevertIndex.run");
 
             RevertIndex revertIndex = new RevertIndex();
-            Object[][] result = DBHelper.getInstance().loadApolloHtmlTableDataWithTop100();
-            revertIndex.revertIndex(result);
+            int unIndexData = DBHelper.getInstance().countUnIndexData();
+            if(unIndexData > 0) {
+                int loopTimes = unIndexData/100+1;
+                for(int t=0; t<loopTimes;t++) {
+                    Object[][] result = DBHelper.getInstance().loadApolloHtmlTableDataWithNumber(100);
+                    revertIndex.revertIndex(result);
+                }
+            }
             logger.info("反向索引建立完毕");
         }catch (Exception e){
             logger.error(e.getMessage());

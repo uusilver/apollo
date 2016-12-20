@@ -108,8 +108,8 @@ public class DBHelper {
      * 每批次只处理100条数据
      * @return
      */
-    public Object[][] loadApolloHtmlTableDataWithTop100(){
-        String sql = "select uuid, title, original_url, body_content from apollo_html_content_collection where invert_index_flag='N' limit 100";
+    public Object[][] loadApolloHtmlTableDataWithNumber(int num){
+        String sql = "select uuid, title, original_url, body_content from apollo_html_content_collection where invert_index_flag='N' limit "+num;
 //        logger.info("数据库执行查询操作:"+sql);
         Connection connection = null;
         PreparedStatement ps = null;
@@ -137,6 +137,32 @@ public class DBHelper {
             DBUtil.closeConnect(rs, ps, connection);
         }
         return null;
+    }
+
+    /**
+     * 每批次只处理100条数据
+     * @return
+     */
+    public int countUnIndexData(){
+        String sql = "select count(uuid) as num from apollo_html_content_collection where invert_index_flag='N'";
+//        logger.info("数据库执行查询操作:"+sql);
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int number = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(sql);
+            rs = ps.executeQuery();
+            if (rs.next()){
+                number = rs.getInt("num");
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }finally {
+            DBUtil.closeConnect(rs, ps, connection);
+        }
+        return number;
     }
 
 

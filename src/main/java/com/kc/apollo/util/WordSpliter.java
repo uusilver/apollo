@@ -40,7 +40,7 @@ public class WordSpliter {
         System.out.println(cfg.getQuantifierDicionary());
         List<String> list = new ArrayList<String>();
         StringReader input = new StringReader(keywords.trim());
-        IKSegmenter ikSeg = new IKSegmenter(input, false);   // true 用智能分词 ，false细粒度
+        IKSegmenter ikSeg = new IKSegmenter(input, true);   // true 用智能分词 ，false细粒度
         try {
             for (Lexeme lexeme = ikSeg.next(); lexeme != null; lexeme = ikSeg.next()) {
                 list.add(lexeme.getLexemeText());
