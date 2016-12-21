@@ -178,6 +178,12 @@
 <script type="text/javascript" language="javascript">
 $(function () {
 
+	$("body").keydown(function() {
+		if (event.keyCode == "13") {//keyCode=13是回车键
+			$("#search").trigger('click');
+		}
+	});
+
 	$("#khxgd").css({ "z-index": "10" });
 	$("#kmtbd").css({ "z-index": "9" });
 

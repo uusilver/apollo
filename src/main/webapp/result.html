@@ -309,6 +309,13 @@
 
 <script>
     $(function () {
+
+        $("body").keydown(function() {
+            if (event.keyCode == "13") {//keyCode=13是回车键
+                $("#search").trigger('click');
+            }
+        });
+
         var keywords = window.location.href.split("?")[1];
         if (keywords) {
             search(decodeURI(keywords), 0, 0);
