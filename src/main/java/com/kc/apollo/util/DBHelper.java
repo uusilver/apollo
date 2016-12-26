@@ -140,7 +140,7 @@ public class DBHelper {
     }
 
     /**
-     * 每批次只处理100条数据
+     * 获得未分词处理的总行数, table: apollo_html_content_collection
      * @return
      */
     public int countUnIndexData(){
@@ -163,6 +163,47 @@ public class DBHelper {
             DBUtil.closeConnect(rs, ps, connection);
         }
         return number;
+    }
+
+    public Object[][] queryResultFromDatabase(String sql, List<DBTypes> types, Object[] objects) throws Exception {
+        ResultSet rs = null;
+        if (types!=null && objects!=null && types.size() != objects.length){
+            throw new Exception("Types and Objects must have same number");
+        }
+//        logger.info("数据库执行更新操作:"+SqlStringFormater.formatSql(sql, objects));
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(sql);
+            if(types!=null && objects !=null) {
+                ps = setPreparementValuesBasedOnTypes(types, objects, ps);
+            }
+            rs = ps.executeQuery();
+            int columnLength = rs.getMetaData().getColumnCount();
+            rs.last();
+            int rowLength = rs.getRow();
+            //移回第一行
+            rs.beforeFirst();
+            Object[][] resultObject = new Object[rowLength][columnLength];
+            int index = 0;
+            while (rs.next()){
+                //初始化新行的数据
+                Object[] rowObject = new Object[columnLength];
+                for(int columnIndex=1; columnIndex<=columnLength; columnIndex++){
+                    //添加列信息
+                    rowObject[columnIndex-1] = rs.getObject(columnIndex);
+                }
+                resultObject[index] = rowObject;
+                index++;
+            }
+            return resultObject;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }finally {
+            DBUtil.closeConnect(rs, ps, connection);
+        }
+        return  null;
     }
 
 
@@ -191,4 +232,6 @@ public class DBHelper {
 
         return ps;
     }
+
+
 }

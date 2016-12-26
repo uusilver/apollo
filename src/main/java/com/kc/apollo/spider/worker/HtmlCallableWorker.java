@@ -1,5 +1,6 @@
 package com.kc.apollo.spider.worker;
 
+import com.kc.apollo.model.SpiderSqlBean;
 import com.kc.apollo.model.SpiderXmlBean;
 import com.kc.apollo.types.DBTypes;
 import com.kc.apollo.util.DBHelper;
@@ -19,17 +20,31 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Created by lijunying on 16/10/17.
  * 根据定义好的XML文件，进行爬取工作的爬虫
  */
-public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
+public class HtmlCallableWorker extends HtmlParentWorker implements Callable<Boolean>{
 
     Log logger = LogFactory.getLog(CommonHtmlWorkderBaseOnConfigedXmlFile.class);
 
+    private final SpiderSqlBean bean;
 
-    public void retreveHyberLinkFromHtml(String base, String prefix, int maxDepth, int currentDepth){
+    public HtmlCallableWorker(SpiderSqlBean bean){
+        this.bean = bean;
+    }
+
+    @Override
+    public Boolean call() throws Exception {
+        logger.info("子线程开始执行:"+bean.toString()+" ---> "+ Thread.currentThread().toString());
+        retreveHyberLinkFromHtml(bean.getBase(), bean.getPrefix(), bean.getDepth(), 0);
+        return java.lang.Boolean.TRUE;
+    }
+
+    private void retreveHyberLinkFromHtml(String base, String prefix, int maxDepth, int currentDepth){
         if(currentDepth == maxDepth)
             return;
         try {
@@ -60,25 +75,25 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
             //TODO 保存keywords 和 description
 
             String findSql = "select visited_url from apollo_visit_history where visited_url=?";
-                    List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
-                    Object[] queryCondition = new Object[]{base};
-                    if (!DBHelper.getInstance().isExistData(findSql, typeList, queryCondition)) { // 数据库不存在数据
-                        //将URL存入数据库
-                        String insertSql = "insert into apollo_visit_history (visited_url, date) values (?, ?)";
-                        List<DBTypes> insetTypelist = Arrays.asList(DBTypes.STRING, DBTypes.DATE);
-                        Object[] insertContent = new Object[]{base, DataHelper.getCurrentTimeStamp()};
-                        DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
+            List<DBTypes> typeList = Arrays.asList(DBTypes.STRING);
+            Object[] queryCondition = new Object[]{base};
+            if (!DBHelper.getInstance().isExistData(findSql, typeList, queryCondition)) { // 数据库不存在数据
+                //将URL存入数据库
+                String insertSql = "insert into apollo_visit_history (visited_url, date) values (?, ?)";
+                List<DBTypes> insetTypelist = Arrays.asList(DBTypes.STRING, DBTypes.DATE);
+                Object[] insertContent = new Object[]{base, DataHelper.getCurrentTimeStamp()};
+                DBHelper.getInstance().insertTable(insertSql, insetTypelist, insertContent);
 
-                        //将数据正式保存入数据库
-                        String persistIntoDb = "insert into apollo_html_content_collection " +
-                                "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark, keywords, description)" +
-                                "values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                        List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
-                                DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
-                        Object[] values = new Object[]{UUID.randomUUID().toString(), title, base, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",bodyContent, "website",keywords,description};
-                        DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
-                        downloadRemoteFileAndPersist(base, prefix);
-                    }
+                //将数据正式保存入数据库
+                String persistIntoDb = "insert into apollo_html_content_collection " +
+                        "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark, keywords, description)" +
+                        "values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
+                        DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
+                Object[] values = new Object[]{UUID.randomUUID().toString(), title, base, "N", DataHelper.getCurrentTimeStamp(), 10, "Y", "N", "N",bodyContent, "website",keywords,description};
+                DBHelper.getInstance().insertTable(persistIntoDb, keyTypes, values);
+                downloadRemoteFileAndPersist(base, prefix);
+            }
 
             Elements allAEle =body.select("a");
             for (Iterator it = allAEle.iterator(); it.hasNext();) {
@@ -89,7 +104,7 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
                 if(isInternalSiteUrlLinkValid(link)) {
                     link = e.attr("abs:href");
                 }
-                
+
                 retreveHyberLinkFromHtml(link, prefix, maxDepth, currentDepth+1);
 
 
@@ -100,8 +115,7 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
     }
 
 
-    //TODO 暂时不提供，附件种类太过烦杂，需要更多的时间开发
-    public void downloadRemoteFileAndPersist(String fileUrlAddress, String prefix) {
+    private void downloadRemoteFileAndPersist(String fileUrlAddress, String prefix) {
         try {
             //正式爬去数据
             Document document = Jsoup.connect(fileUrlAddress).get();
@@ -175,7 +189,7 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public static String[][] getData(InputStream inputStream, int ignoreRows)
+    private static String[][] getData(InputStream inputStream, int ignoreRows)
             throws FileNotFoundException, IOException {
         List<String[]> result = new ArrayList<String[]>();
         int rowSize = 0;
@@ -268,7 +282,7 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
      * @param str 要处理的字符串
      * @return 处理后的字符串
      */
-    public static String rightTrim(String str) {
+    private static String rightTrim(String str) {
         if (str == null) {
             return "";
         }
@@ -281,4 +295,6 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
         }
         return str.substring(0, length);
     }
+
+
 }
