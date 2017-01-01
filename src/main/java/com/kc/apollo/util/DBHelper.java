@@ -62,9 +62,9 @@ public class DBHelper {
      * @return
      * @throws Exception
      */
-    public void updateTable(String sql, List<DBTypes> types, Object[] objects) throws Exception {
+    public void updateTable(String sql, List<DBTypes> types, Object[] objects) {
         if (types.size() != objects.length){
-            throw new Exception("Types and Objects must have same number");
+            logger.error("Types and Objects must have same number");
         }
 //        logger.info("数据库执行更新操作:"+SqlStringFormater.formatSql(sql, objects));
         Connection connection = null;
@@ -109,7 +109,7 @@ public class DBHelper {
      * @return
      */
     public Object[][] loadApolloHtmlTableDataWithNumber(int num){
-        String sql = "select uuid, title, original_url, body_content from apollo_html_content_collection where invert_index_flag='N' limit "+num;
+        String sql = "select uuid, title from apollo_html_content_collection where index_flag='N' limit "+num;
 //        logger.info("数据库执行查询操作:"+sql);
         Connection connection = null;
         PreparedStatement ps = null;
@@ -118,14 +118,12 @@ public class DBHelper {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(sql);
             rs = ps.executeQuery();
-            Object[][] result = new Object[100][4];
+            Object[][] result = new Object[200][2];
             int index = 0;
             while (rs.next()){
-                Object[] row = new Object[4];
+                Object[] row = new Object[2];
                 row[0] = rs.getString("uuid");
                 row[1] = rs.getString("title");
-                row[2] = rs.getString("original_url");
-                row[3] = rs.getString("body_content");
                 result[index] = row;
                 index++;
             }
@@ -144,7 +142,7 @@ public class DBHelper {
      * @return
      */
     public int countUnIndexData(){
-        String sql = "select count(uuid) as num from apollo_html_content_collection where invert_index_flag='N'";
+        String sql = "select count(uuid) as num from apollo_html_content_collection where index_flag='N'";
 //        logger.info("数据库执行查询操作:"+sql);
         Connection connection = null;
         PreparedStatement ps = null;

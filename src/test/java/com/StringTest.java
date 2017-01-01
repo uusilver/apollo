@@ -13,5 +13,6 @@ public class StringTest {
         if(link.startsWith("."))
             link = link.substring(1,link.length());
         System.out.println(link);
+        System.getProperty("user.dir");
     }
 }

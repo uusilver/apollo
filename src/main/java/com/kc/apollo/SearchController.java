@@ -1,6 +1,8 @@
 package com.kc.apollo;
 
 import com.google.gson.Gson;
+import com.kc.apollo.index.LuceneIndexHolder;
+import com.kc.apollo.lucene.LuceneSearchManager;
 import com.kc.apollo.model.SearchObject;
 import com.kc.apollo.model.SearchResult;
 import com.kc.apollo.spider.fixer.BaiduRealTimeWorker;
@@ -9,15 +11,12 @@ import com.kc.apollo.util.DBHelper;
 import com.kc.apollo.util.DBUtil;
 import com.kc.apollo.util.DataHelper;
 import com.kc.apollo.util.WordSpliter;
-import org.ansj.domain.Term;
-import org.ansj.recognition.NatureRecognition;
-import org.ansj.splitWord.analysis.ToAnalysis;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class SearchController {
 
     @RequestMapping(value="/search",method = RequestMethod.POST)
     @ResponseBody
-    public String search(SearchObject searchObject) throws SQLException, IOException {
+    public String search(SearchObject searchObject) throws SQLException, IOException, InvalidTokenOffsetsException {
             long start = System.currentTimeMillis();
 
         String keywords = searchObject.getKeywords();
@@ -51,44 +50,56 @@ public class SearchController {
         //结果是否存在 在315快查的数据库内
         String hasResult = "Y";
 
-        List<String> list = WordSpliter.getInstance().getWordListAfterSplit(keywords);
+        List<String> keyWordsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
 
-        String[] strings = new String[list.size()];
+        Map<String, String> map = LuceneSearchManager.getInstance().search(LuceneIndexHolder.getInstance().getDirectory(), keyWordsList, 10);
+        Set<String> set = map.keySet();
+        String[] strings = new String[set.size()];
         String questionMark = "";
-        for (int i=0; i<list.size(); i++) {
-            strings[i] = list.get(i);
-            questionMark+="?,";
-        }
-        questionMark = questionMark.substring(0,questionMark.length()-1);
-
-        int pageLimitStart = pageNo*pageSize;
-        int pageLimitEnd = pageLimitStart+pageSize;
-
-        String sql = "select full_text, url_address, create_date, body_content from apollo_invert_index where hot_word in("+questionMark+") limit "+ pageLimitStart +","+pageLimitEnd;
-        logger.info("数据库执行查询操作:"+sql);
-        Connection connection = DBUtil.getConnection();
-        PreparedStatement ps = connection.prepareStatement(sql);
-        for(int i =0 ; i<strings.length; i++){
-            ps.setString(i+1, strings[i]);
-        }
-        ResultSet rs = ps.executeQuery();
-
+        String sql = null;
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         SearchResult searchResult = new SearchResult();
-        Set<SearchResult.SearchItem> searchItemSet = new HashSet<SearchResult.SearchItem>();
-        while (rs.next()){
-            SearchResult.SearchItem item = new SearchResult.SearchItem();
-            item.setTitle(rs.getString("full_text"));
-            item.setUrl(rs.getString("url_address"));
-            item.setCreate_date(rs.getTimestamp("create_date").toString());
-            item.setBody_content(rs.getString("body_content"));
-            item.setSource("315快查");
-            searchItemSet.add(item);
+        int index = 0;
+        for (String uuid : set) {
+            strings[index] = uuid;
+            questionMark+="?,";
+            index++;
         }
-        searchResult.setSearchItemSet(searchItemSet);
+        if(questionMark.length()>0) {
+            questionMark = questionMark.substring(0, questionMark.length() - 1);
+
+            int pageLimitStart = pageNo * pageSize;
+            int pageLimitEnd = pageLimitStart + pageSize;
+
+            sql = "select uuid, original_url, create_date, body_content from apollo_html_content_collection where uuid in(" + questionMark + ") limit " + pageLimitStart + "," + pageLimitEnd;
+
+            logger.info("数据库执行查询操作:" + sql);
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(sql);
+            for (int i = 0; i < strings.length; i++) {
+                ps.setString(i + 1, strings[i]);
+            }
+            rs = ps.executeQuery();
+
+            searchResult = new SearchResult();
+            Set<SearchResult.SearchItem> searchItemSet = new HashSet<SearchResult.SearchItem>();
+            while (rs.next()) {
+                SearchResult.SearchItem item = new SearchResult.SearchItem();
+                item.setTitle(map.get(rs.getString("uuid")));
+                item.setUrl(rs.getString("original_url"));
+                item.setCreate_date(rs.getTimestamp("create_date").toString());
+                item.setBody_content(rs.getString("body_content"));
+                item.setSource("315快查");
+                searchItemSet.add(item);
+            }
+            searchResult.setSearchItemSet(searchItemSet);
+        }
 
         //结果集不包含条数才需要进行重新计算
         if(searchObject.getTotalResult()==0) {
-            sql = "select count(uuid) as totalCount from apollo_invert_index where hot_word in(" + questionMark + ")";
+            sql = "select count(uuid) as totalCount from apollo_html_content_collection where uuid in(" + questionMark + ")";
             ps = connection.prepareStatement(sql);
             for(int i =0 ; i<strings.length; i++){
                 ps.setString(i+1, strings[i]);
@@ -109,7 +120,6 @@ public class SearchController {
         //如果此处从315快查数据依然为空，我们则用fixer包下的搜索来进行结果替代
         if(searchResult.getSearchItemSet()==null || searchResult.getSearchItemSet().size()== 0){
             searchResult = new BaiduRealTimeWorker().baiduWorker(keywords);
-
             hasResult = "N";
         }
 

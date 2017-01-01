@@ -2,7 +2,7 @@ package com.kc.apollo.task;
 
 import com.kc.apollo.cache.HotSearchKeyCache;
 import com.kc.apollo.cache.NewsCache;
-import com.kc.apollo.index.RevertIndex;
+import com.kc.apollo.index.LuceneIndexBuilder;
 import com.kc.apollo.spider.SpiderMainRunner;
 import com.kc.apollo.util.HotSearchKeyGenerator;
 import com.kc.apollo.util.NewsGenerator;
@@ -40,7 +40,7 @@ public class ApolloDailyTask {
     @Scheduled(cron = "0 0 6 * * *")
     public void revertIndexTask() {
         logger.info("每天6点索引生成任务执行... " + new Date());
-        new RevertIndex().revertIndexRunner();
+        LuceneIndexBuilder.getInstance().buildIndex();
     }
 
     /**
