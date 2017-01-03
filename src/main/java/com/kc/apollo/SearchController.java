@@ -52,7 +52,7 @@ public class SearchController {
 
         List<String> keyWordsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
 
-        Map<String, String> map = LuceneSearchManager.getInstance().search(LuceneIndexHolder.getInstance().getDirectory(), keyWordsList, 10);
+        Map<String, String> map = LuceneSearchManager.getInstance().search(LuceneIndexHolder.getInstance().getDirectory(), keyWordsList, 30);
         Set<String> set = map.keySet();
         String[] strings = new String[set.size()];
         String questionMark = "";

@@ -71,7 +71,7 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
 
                         //将数据正式保存入数据库
                         String persistIntoDb = "insert into apollo_html_content_collection " +
-                                "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark, keywords, description)" +
+                                "(uuid, title, original_url, index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark, keywords, description)" +
                                 "values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
                         List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
                                 DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING);
@@ -136,7 +136,7 @@ public class CommonHtmlWorkderBaseOnConfigedXmlFile extends HtmlParentWorker {
                             }
                             //将数据正式保存入数据库
                             String persistIntoDb = "insert into apollo_html_content_collection " +
-                                    "(uuid, title, original_url, invert_index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark)" +
+                                    "(uuid, title, original_url, index_flag, create_date, page_rank, active_flag, on_top_flag, advertisement_flag, body_content, remark)" +
                                     "values (?,?,?,?,?,?,?,?,?,?,?)";
                             List<DBTypes> keyTypes = Arrays.asList(DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,
                                     DBTypes.DATE, DBTypes.INTEGER, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING, DBTypes.STRING,DBTypes.STRING);

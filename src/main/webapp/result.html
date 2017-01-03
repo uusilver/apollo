@@ -26,14 +26,6 @@
         </div>
     </div>
     <div class="nav">
-        <!-- <ul class="searchList">
-             <li class="searchItem current">快查舆情</li>
-             <li class="searchItem">物品识别码</li>
-             <li class="searchItem">网站安全查询</li>
-             <li class="searchItem">网站备案查询</li>
-             <li class="searchItem">二维码在线生成</li>
-         </ul>
-         <a href="javascript:;" class="tips">关于快查搜索引擎</a>-->
     </div>
 </div>
 
@@ -390,8 +382,8 @@
         $(".pagination").pagination(dataObj.totalResult, {
             current_page: 0, //当前页码
             items_per_page: 10,
-            display_msg: true,
-            callback: pageselectCallback
+            display_msg: true
+//            callback: pageselectCallback
         });
         function pageselectCallback(page_id, jq) {
 //                    alert("当前页id(由0开始)：" + page_id + "，\n每页显示：" + this.items_per_page + "条数据");

@@ -7,10 +7,7 @@ import com.kc.apollo.util.DBHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -133,7 +130,7 @@ public class LuceneIndexBuilder {
     private static Document objToDocument(LuceneIndexModel model) {
         Document document = new Document();
         document.add(new TextField(LuceneIndexModel.TEXT, model.getText(), Field.Store.YES));
-        document.add(new StringField(LuceneIndexModel.UUID, model.getUuid(), Field.Store.YES));
+        document.add(new StoredField(LuceneIndexModel.UUID, model.getUuid()));
 //        FieldType ft = new FieldType();
 //        ft.setStored(true);
 //        ft.setIndexed(true);
