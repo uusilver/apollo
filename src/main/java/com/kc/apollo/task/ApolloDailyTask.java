@@ -1,7 +1,11 @@
 package com.kc.apollo.task;
 
-import com.kc.apollo.index.RevertIndex;
+import com.kc.apollo.cache.HotSearchKeyCache;
+import com.kc.apollo.cache.NewsCache;
+import com.kc.apollo.index.LuceneIndexBuilder;
 import com.kc.apollo.spider.SpiderMainRunner;
+import com.kc.apollo.util.HotSearchKeyGenerator;
+import com.kc.apollo.util.NewsGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,7 +40,25 @@ public class ApolloDailyTask {
     @Scheduled(cron = "0 0 6 * * *")
     public void revertIndexTask() {
         logger.info("每天6点索引生成任务执行... " + new Date());
-        new RevertIndex().revertIndexRunner();
+        LuceneIndexBuilder.getInstance().buildIndex();
+    }
+
+    /**
+     * 更新新闻缓存。每天凌晨 07:00 执行一次
+     */
+    @Scheduled(cron = "0 0 7 * * *")
+    public void updateNewsCache() {
+        logger.info("每天7点更新新闻缓存任务执行... " + new Date());
+        NewsCache.getInstance().updateCache(NewsGenerator.getNewsContent());
+    }
+
+    /**
+     * 更新新闻缓存。每天凌晨 08:00 执行一次
+     */
+    @Scheduled(cron = "0 0 8 * * *")
+    public void updateHotKeysCache() {
+        logger.info("每天8点更新热门搜索任务执行... " + new Date());
+        HotSearchKeyCache.getInstance().updateCache(HotSearchKeyGenerator.getHotSearchKey());
     }
 
 //    /**

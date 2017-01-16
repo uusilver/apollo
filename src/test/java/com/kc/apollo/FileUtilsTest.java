@@ -10,6 +10,7 @@ public class FileUtilsTest {
 
     @Test
     public void testDeleteFile(){
+        FileUtils.delectFile("Spider.run");
         FileUtils.delectFile("RevertIndex.run");
     }
 }

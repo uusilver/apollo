@@ -1,6 +1,7 @@
 package com.kc.apollo;
 
 import com.kc.apollo.spider.SpiderMainRunner;
+import com.kc.apollo.spider.SpiderMultiThreadRunner;
 import org.junit.Test;
 
 /**
@@ -9,7 +10,9 @@ import org.junit.Test;
 public class SpiderTest {
     @Test
     public void testSpider(){
-        //开启多现场执行
-            new SpiderMainRunner().spiderRunner();
+            //单线程爬虫
+//            new SpiderMainRunner().spiderRunner();
+            //多线程爬虫
+            new SpiderMultiThreadRunner().spiderRunner();
         }
 }

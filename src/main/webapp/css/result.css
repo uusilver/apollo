@@ -59,7 +59,11 @@ html{*overflow:auto;}
 /*搜索结果列表区域*/
 .resultArea .resultList{padding-left:30px;}
 .resultArea .resultList .resultItem{margin-bottom:20px;}
+<<<<<<< HEAD
 .resultArea .resultList .resultItem2{margin-bottom:30px; width:540px;}
+=======
+.resultArea .resultList .resultItem2{margin-bottom:30px;}
+>>>>>>> 297c8a6e9cceacb0a2998d93cd441d0792ea00dc
 .resultArea .resultList .itemHead{margin-bottom:5px;color:#767676;} 
 .resultArea .resultList .itemHead .keyWord{color:#d90909;}
 .resultArea .resultList .itemBody .keyWord{color:#d90909;}
