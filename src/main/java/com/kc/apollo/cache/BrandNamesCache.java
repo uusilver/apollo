@@ -9,15 +9,16 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 保存315快查项目内所有的品牌词信息，用于提供自动完成功能以及进行数据检索过程
  * Created by lijunying on 16/12/10.
  */
-public class AutoCompleteCache {
+public class BrandNamesCache {
 
-    private static  Log logger = LogFactory.getLog(AutoCompleteCache.class);
+    private static  Log logger = LogFactory.getLog(BrandNamesCache.class);
 
     private static  final int SIZE = 10;
 
-    private static AutoCompleteCache INSTANCE = new AutoCompleteCache();
+    private static BrandNamesCache INSTANCE = new BrandNamesCache();
 
     private static final List<String> listCache = new ArrayList<>();
 
@@ -30,14 +31,14 @@ public class AutoCompleteCache {
             logger.info("缓存初始化完成...");
         }
     }
-    private AutoCompleteCache(){
+    private BrandNamesCache(){
 
     }
 
-    public static  AutoCompleteCache getInstance(){
+    public static BrandNamesCache getInstance(){
         if(INSTANCE !=null)
             return INSTANCE;
-        return new AutoCompleteCache();
+        return new BrandNamesCache();
     }
 
     public List<String> getListCache(String keywords){
@@ -50,5 +51,14 @@ public class AutoCompleteCache {
             }
         }
         return result;
+    }
+
+    //检索输入的文章标题中是否包含品牌关键词
+    //如果包含返回true,不然就是false
+    public boolean containsBrand(String title){
+            for(String s : listCache)
+                if(title.contains(s))
+                    return true;
+        return false;
     }
 }

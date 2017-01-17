@@ -26,7 +26,7 @@ public class HtmlProducer implements Runnable {
             int index = 1;
             while (index < 10) {
                 System.out.println("生产任务");
-                queue.put(new SpiderTask(new Random().nextInt()));
+                queue.put(new SpiderTask());
                 Thread.sleep(new Random().nextInt(10)*100);
                 index++;
 
