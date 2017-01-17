@@ -40,4 +40,8 @@ public class LuceneIndexModel {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+
+    public boolean isNotNull(){
+        return uuid!=null && uuid.length()>0 && text!=null && text.length()>0;
+    }
 }

@@ -41,7 +41,7 @@ public class LuceneIndexBuilder {
     }
 
     public void buildIndex() {
-        //Ã»ÓĞÔò´´½¨ÎÄ¼ş¼Ğ
+        //åˆ›å»ºç´¢å¼•
         File folder = new File(Constants.LUCENE_INDEX_FOLDER);
         if(!folder.exists()){
             folder.mkdirs();
@@ -54,29 +54,28 @@ public class LuceneIndexBuilder {
                 Object[][] result = DBHelper.getInstance().loadApolloHtmlTableDataWithNumber(200);
                 for (Object[] row : result) {
                     String uuid = (String) row[0];
-                    String title = (String) row[1];//»ñÈ¡´ı·Ö´ÊÄÚÈİ
+                    String title = (String) row[1];//è·å–æ ‡é¢˜
                     list.add(new LuceneIndexModel(title, uuid));
                 }
                 if(buildIndex(false, Constants.LUCENE_INDEX_FOLDER,list)){
-                    //Ë÷Òı¼ÓÔØÍê±Ï£¬¸üĞÂÊı¾İ¿âµÄ¶ÔÓ¦×Ö¶Î
+                    //æ›´æ–°ç»“æœåˆ° æ•°æ®åº“
                     for (Object[] row : result) {
                         String uuid = (String) row[0];
-                        //¸üĞÂ½á¹ûµ½Ö÷±í
+
                         String sql3 = "update apollo_html_content_collection set index_flag='Y' where uuid = ?";
                         List<DBTypes> list3 = Arrays.asList(DBTypes.STRING);
                         Object[] objects3= new Object[]{uuid};
                         DBHelper.getInstance().updateTable(sql3, list3, objects3);
                     }
                 }
-            }//Íê³É¼ÓÔØ´ıË÷ÒıÊı¾İ
+            }//end
 
         }
-        logger.info("Ë÷Òı½¨Á¢Íê±Ï");
+        logger.info("ç´¢å¼•å»ºç«‹å®Œæˆ!");
     }
 
-    //Éú³ÉLuceneË÷ÒıÎÄ¼ş
     private boolean buildIndex(boolean ramIndex, String indexPath, List<LuceneIndexModel> modelList) {
-        //½¨Á¢Ë÷Òı
+        //ä½¿ç”¨Akanalyzerä¸­æ–‡åˆ†è¯
         Analyzer analyzer = new IKAnalyzer();
         Directory directory = null;
         IndexWriter indexWriter = null;
@@ -88,12 +87,14 @@ public class LuceneIndexBuilder {
             else {
                 directory = FSDirectory.open(new File(Constants.LUCENE_INDEX_FOLDER));
             }
-            IndexWriterConfig writerConfig = new IndexWriterConfig(Version.LUCENE_47, analyzer); // ´´½¨Ë÷ÒıµÄÅäÖÃĞÅÏ¢
+            IndexWriterConfig writerConfig = new IndexWriterConfig(Version.LUCENE_47, analyzer); // ä½¿ç”¨4.7é…ç½®
             indexWriter = new IndexWriter(directory, writerConfig);
-            indexWriter.forceMerge(10); // µ±Ğ¡ÎÄ¼ş´ïµ½¶àÉÙ¸öÊ±£¬¾Í×Ô¶¯ºÏ²¢¶à¸öĞ¡ÎÄ¼şÎªÒ»¸ö´óÎÄ¼ş
+            indexWriter.forceMerge(10); // å¼ºåˆ¶åˆå¹¶æ–‡ä»¶
 
             for (LuceneIndexModel model : modelList) {
-                indexWriter.addDocument(objToDocument(model));
+                if(model.isNotNull()){
+                    indexWriter.addDocument(objToDocument(model));
+                }
             }
             return true;
 
@@ -114,15 +115,15 @@ public class LuceneIndexBuilder {
     }
 
     /**
-     * LongField	Ö÷Òª´¦ÀíLongÀàĞÍµÄ×Ö¶ÎµÄ´æ´¢£¬ÅÅĞòÊ¹ÓÃSortField.Type.Long,Èç¹û½øĞĞ·¶Î§²éÑ¯»ò¹ıÂËÀûÓÃNumericRangeQuery.newLongRange()£¬LongField³£ÓÃÀ´½øĞĞÊ±¼ä´ÁµÄÅÅĞò£¬±£´æSystem
+     * LongField	ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Longï¿½ï¿½ï¿½Íµï¿½ï¿½Ö¶ÎµÄ´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½SortField.Type.Long,ï¿½ï¿½ï¿½ï¿½ï¿½Ğ·ï¿½Î§ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½NumericRangeQuery.newLongRange()ï¿½ï¿½LongFieldï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò£¬±ï¿½ï¿½ï¿½System
      * .currentTimeMillions()
-     * FloatField	¶ÔFloatÀàĞÍµÄ×Ö¶Î½øĞĞ´æ´¢£¬ÅÅĞò²ÉÓÃSortField.Type.Float,·¶Î§²éÑ¯²ÉÓÃNumericRangeQuery.newFloatRange()
-     * BinaryDocVluesField	Ö»´æ´¢²»¹²ÏíÖµ£¬Èç¹ûĞèÒª¹²ÏíÖµ¿ÉÒÔÓÃSortedDocValuesField
-     * NumericDocValuesField	ÓÃÓÚÊıÖµÀàĞÍµÄFieldµÄÅÅĞò(Ô¤ÅÅĞò)£¬ĞèÒªÔÚÒªÅÅĞòµÄfieldºóÌí¼ÓÒ»¸öÍ¬ÃûµÄNumericDocValuesField
-     * SortedDocValuesField	ÓÃÓÚStringÀàĞÍµÄFieldµÄÅÅĞò£¬ĞèÒªÔÚStringFieldºóÌí¼ÓÍ¬ÃûµÄSortedDocValuesField
-     * StringField	ÓÃ»§StringÀàĞÍµÄ×Ö¶ÎµÄ´æ´¢£¬StringFieldÊÇÖ»Ë÷Òı²»·Ö´Ê
-     * TextField	¶ÔStringÀàĞÍµÄ×Ö¶Î½øĞĞ´æ´¢£¬TextFieldºÍStringFieldµÄ²»Í¬ÊÇTextField¼ÈË÷ÒıÓÖ·Ö´Ê
-     * StoredField	´æ´¢FieldµÄÖµ£¬¿ÉÒÔÓÃIndexSearcher.docºÍIndexReader.documentÀ´»ñÈ¡´ËFieldºÍ´æ´¢µÄÖµ
+     * FloatField	ï¿½ï¿½Floatï¿½ï¿½ï¿½Íµï¿½ï¿½Ö¶Î½ï¿½ï¿½Ğ´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SortField.Type.Float,ï¿½ï¿½Î§ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½NumericRangeQuery.newFloatRange()
+     * BinaryDocVluesField	Ö»ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SortedDocValuesField
+     * NumericDocValuesField	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Íµï¿½Fieldï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Ô¤ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½fieldï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Í¬ï¿½ï¿½ï¿½NumericDocValuesField
+     * SortedDocValuesField	ï¿½ï¿½ï¿½ï¿½Stringï¿½ï¿½ï¿½Íµï¿½Fieldï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½StringFieldï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½SortedDocValuesField
+     * StringField	ï¿½Ã»ï¿½Stringï¿½ï¿½ï¿½Íµï¿½ï¿½Ö¶ÎµÄ´æ´¢ï¿½ï¿½StringFieldï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Ö´ï¿½
+     * TextField	ï¿½ï¿½Stringï¿½ï¿½ï¿½Íµï¿½ï¿½Ö¶Î½ï¿½ï¿½Ğ´æ´¢ï¿½ï¿½TextFieldï¿½ï¿½StringFieldï¿½Ä²ï¿½Í¬ï¿½ï¿½TextFieldï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ö´ï¿½
+     * StoredField	ï¿½æ´¢Fieldï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IndexSearcher.docï¿½ï¿½IndexReader.documentï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Fieldï¿½Í´æ´¢ï¿½ï¿½Öµ
      *
      * @param model
      * @return
