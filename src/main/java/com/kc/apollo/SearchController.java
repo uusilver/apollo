@@ -129,123 +129,30 @@ public class SearchController {
 
     }
 
+    //广告的type决定了广告的类型,PC端广告type=1
     @RequestMapping(value="/advice",method = RequestMethod.POST)
     @ResponseBody
-    public String advice(SearchObject searchObject) throws SQLException, IOException, InvalidTokenOffsetsException {
+    public String advice(SearchObject searchObject) throws Exception {
 
         String keywords = searchObject.getKeywords();
+        List<String> keyWordsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
+        String result = null;
+        for(String str : keyWordsList){
+            String sql = "select content from apollo_advices where keyword=? and type=1";
+            List<DBTypes> list = Arrays.asList(DBTypes.STRING);
+            Object[] objects = new Object[]{str};
+            Object[][] results = DBHelper.getInstance().queryResultFromDatabase(sql, list, objects);
+            if(results[0]!=null && results[0][0]!=null){
+                //数据库中查找到第一条数据，返回结果，跳出循环
+                result = (String)results[0][0];
+                break;
+            }
+        }
 
-        String result = "<div style=' margin-left:30px;width:520px;border:1px solid #e3e3e3;padding:8px 9px 14px 7px;margin-bottom:20px;'>\n" +
-                " <link href='../pinpai/a01/laonichi.css' rel='stylesheet' type='text/css'/>\n" +
-                "\n" +
-                "                                             <div id='lnc'>\n" +
-                "                            <div class='wppn5w6' data-time='1472626871221'>\n" +
-                "                                <div class='rolje0e rolje0e-0' id='w-3y6oiw'>\n" +
-                "                                    <div class='lxrvgut lxrvgut-h1'>\n" +
-                "                                        <h2>\n" +
-                "                                            <a target='_blank' class='huw0j5w-header-title' data-is-main-url='true'\n" +
-                "                                               href='http://www.laonichi.com/'><em>老泥池</em>酒业官方网站</a><a\n" +
-                "                                                class='huw0j5w-official-site' target='_blank'\n" +
-                "                                                href='http://www.laonichi.com/'>官网</a>\n" +
-                "                                        </h2>\n" +
-                "\n" +
-                "                                        <div class='huw0j5w-cont'>\n" +
-                "                                            <a class='huw0j5w-logo' target='_blank' href='http://www.laonichi.com/' title2='logo'><img\n" +
-                "                                                    src='../pinpai/a01/logo.jpg' width='121' height='121'\n" +
-                "                                                    style='border:0;display:block;width:121px;height:121px'></a>\n" +
-                "\n" +
-                "                                            <div  style='margin-left:20px;display:block; float:left;line-height:18px;width:380px;overflow:hidden;zoom:1;text-indent:2em;line-height:21px;'>\n" +
-                "                                                <a target='_blank' href='http://www.laonichi.com/'>老泥池</a>'泸南宻境'——薄刀岭下玉琼浆泸县，汉设江阳郡，梁（南北朝）初置泸州，位于万里长江上游岸边。历史悠久、人文荟萃，交通便利、物产丰富，历来被称为川南重镇。因其位于北纬28°54′40″～29°20′00″之间，正处在神秘的北纬29°地带，孕育出了神奇产物——'泸南宻境'老泥池酒。\n" +
-                "\n" +
-                "                                                <div class='huw0j5w-site' style='text-indent:0'>http://www.laonichi.com/ 2016-12\n" +
-                "                                                    <div id='tools_w-3y6oiw-ec' class='c-tools'\n" +
-                "                                                         data-tools='{&quot;title&quot;:&quot;老泥池集团官方网站&quot;,&quot;url&quot;:&quot;http://www.laonichi.com/.cn&quot;}'>\n" +
-                "                                                        <a class='c-tip-icon'><i\n" +
-                "                                                                class='c-icon c-icon-triangle-down-g'></i></a>\n" +
-                "                                                    </div>\n" +
-                "                                                    - <a href='javascript:;' class='huw0j5w-brand'\n" +
-                "                                                         id='w-3y6oiw-brand-text'>广告</a></div>\n" +
-                "                                            </div>\n" +
-                "                                        </div>\n" +
-                "                                    </div>\n" +
-                "\n" +
-                "                                </div>\n" +
-                "                                <div class='rolje0e rolje0e-1' id='w-gn06p7'>\n" +
-                "                                    <div class='lxrvgut lxrvgut-colorlist'>\n" +
-                "                                        <ul>\n" +
-                "                                            <li  style='float:left;width:420px;line-height:24px;overflow:hidden;clear:both;'><span\n" +
-                "                                                    style='display:inline-block;overflow:hidden;width:10px;height:10px;vertical-align:middle;background-color:#1FA4FF;margin-right:4px' class='huw0j5w-color-green'></span><a\n" +
-                "                                                    href='http://www.laonichi.com/Products.asp?lei=1' target='_blank'\n" +
-                "                                                    title2='彩色链接1'>泸南密境老泥池</a>\n" +
-                "\n" +
-                "                                                <p class='huw0j5w-colorlist-desc'><a target='_blank'\n" +
-                "                                                                                     class='huw0j5w-colorlist-desctext' style='font-size:12px; color:#000; '\n" +
-                "                                                                                     title2='彩色链接描述1'\n" +
-                "                                                                                     href='http://www.laonichi.com/Products.asp?lei=1'>窖香浓郁、味醇甜厚，口感丰富、绵长、净爽</a>\n" +
-                "                                                </p>\n" +
-                "                                            </li>\n" +
-                "                                            <li style='float:left;width:420px;line-height:24px;overflow:hidden;clear:both;'><span\n" +
-                "                                                    style='display:inline-block;overflow:hidden;width:10px;height:10px;vertical-align:middle;background-color:#FE820E;margin-right:4px'></span><a\n" +
-                "                                                    href='http://www.laonichi.com/Products.asp?lei=2' target='_blank'\n" +
-                "                                                    title2='彩色链接2'>泸南密境私藏原浆酒</a>\n" +
-                "\n" +
-                "                                                <p class='huw0j5w-colorlist-desc'><a target='_blank'\n" +
-                "                                                                                     class='huw0j5w-colorlist-desctext' style='font-size:12px; color:#000;'\n" +
-                "                                                                                     title2='彩色链接描述2'\n" +
-                "                                                                                     href='http://www.laonichi.com/Products.asp?lei=2'>系中高档酒，口感绵软味道醇厚，饮后不上头</a>\n" +
-                "                                                </p>\n" +
-                "                                            </li>\n" +
-                "                                            <li style='float:left;width:420px;line-height:24px;overflow:hidden;clear:both;'><span\n" +
-                "                                                    style='display:inline-block;overflow:hidden;width:10px;height:10px;vertical-align:middle;background-color:#53C178;margin-right:4px' class='huw0j5w-color-red'></span><a\n" +
-                "                                                    href='http://www.laonichi.com/Products.asp?lei=3' target='_blank'\n" +
-                "                                                    title2='彩色链接3'>泸南密境生态原浆礼盒</a>\n" +
-                "\n" +
-                "                                                <p class='huw0j5w-colorlist-desc'><a target='_blank'\n" +
-                "                                                                                     class='huw0j5w-colorlist-desctext' style='font-size:12px; color:#000;'\n" +
-                "                                                                                     title2='彩色链接描述3'\n" +
-                "                                                                                     href='http://www.laonichi.com/Products.asp?lei=3'>绵甜劲爽，回味悠长，好酒！</a>\n" +
-                "                                                </p>\n" +
-                "                                            </li>\n" +
-                "                                        </ul>\n" +
-                "                                    </div>\n" +
-                "\n" +
-                "                                </div>\n" +
-                "                                <div id='w-og7wps'>\n" +
-                "                                    <div class=' lxrvgut-button-group' style='background:#9e9e9e; color:#FFF;'>\n" +
-                "                                        <table id='w-og7wps-table' border='0' cellspacing='0' cellpading='0'\n" +
-                "                                               width='100%'>\n" +
-                "                                            <tr>\n" +
-                "                                                <td class='huw0j5w-first' width='20%'>\n" +
-                "                                                    <a target='_blank' href='http://www.laonichi.com/Products.asp?lei=1'\n" +
-                "                                                       title2='按钮1'>老泥池系列</a>\n" +
-                "                                                </td>\n" +
-                "                                                <td class=' width='20%'>\n" +
-                "                                                    <a target='_blank' href='http://www.laonichi.com/Products.asp?lei=2'\n" +
-                "                                                       title2='按钮2'>私藏原浆系列</a>\n" +
-                "                                                </td>\n" +
-                "                                                <td class=' width='20%'>\n" +
-                "                                                    <a target='_blank' href='http://www.laonichi.com/Products.asp?lei=3'\n" +
-                "                                                       title2='按钮3'>生态原浆礼盒</a>\n" +
-                "                                                </td>\n" +
-                "                                                <td class=' width='20%'>\n" +
-                "                                                    <a target='_blank' href='http://www.laonichi.com/Products.asp?lei=4'\n" +
-                "                                                       title2='按钮4'>酒神酒</a>\n" +
-                "                                                </td>\n" +
-                "                                                <td class='huw0j5w-last' width='20%'>\n" +
-                "                                                    <a target='_blank' href='http://www.laonichi.com/Products.asp?lei=5'\n" +
-                "                                                       title2='按钮5'>手工老窖酒</a>\n" +
-                "                                                </td>\n" +
-                "                                            </tr>\n" +
-                "                                        </table>\n" +
-                "                                    </div>\n" +
-                "\n" +
-                "                                </div>\n" +
-                "                            </div>\n" +
-                "                        </div>\n" +
-                "                    </div>";
         return result;
     }
 
+    //TODO移动端广告，type=2,针对移动端广告会进行缓存优化
 
 
     private void insertSearchKeyWordsIntoDatabse(String keywords, String resultFlag){
