@@ -64,14 +64,14 @@
                     <!--</span>-->
                 </p>
                 <!-- 品牌词查询结果显示区域开始-->
-                <div class="resultItem2" id="advice">
+                <div class="resultItem2" id="advice" style="display: none">
 
                 </div>
                 <!-- 品牌词查询结果显示区域结束-->
-                <div class="content">
+                <div class="content" id="priceContent" style="display: none">
 
                     <div class="list">
-                        <div class="app-title"><a href="#"><font color="#ff0000">老泥池</font>相关商品</a></div>
+                        <div class="app-title"><a href="#">相关商品</a></div>
 
                         <table class="am-table am-table-striped">
                             <thead>
@@ -81,32 +81,8 @@
                                 <th>零售价格</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>老泥池系列500ml<br/> <span>条码号:1234567890123</span></td>
-                                <td>100</td>
-                                <td>180</td>
-                            </tr>
-                            <tr>
-                                <td>私藏原浆系列500ml<br/><span>条码号:1234567890123</span></td>
-                                <td>160</td>
-                                <td>290</td>
-                            </tr>
-                            <tr>
-                                <td>生态原浆礼盒500ml<br/><span>条码号:1234567890123</span></td>
-                                <td>280</td>
-                                <td>420</td>
-                            </tr>
-                            <tr>
-                                <td>酒神酒500ml<br/><span>条码号:1234567890123</span></td>
-                                <td>3000</td>
-                                <td>4200</td>
-                            </tr>
-                            <tr>
-                                <td>手工老窖酒500ml<br/><span>条码号:1234567890123</span></td>
-                                <td>3300</td>
-                                <td>5200</td>
-                            </tr>
+                            <tbody id="priceList">
+
                             </tbody>
                         </table>
                         <div class='app-bottom'>
@@ -245,18 +221,28 @@
         //******************搜索方法区开始***************************************************************
         if (keywords) {
             var searchKeyWords = decodeURI(keywords);
+
             search(searchKeyWords, 0, 0);
             //加载广告
+            $("#advice").css('display','none');
             loadAdvice(searchKeyWords);
-            $("#keywords").val(decodeURI(keywords));
-            $(document).attr("title", decodeURI(keywords) + "-快查-315快查物联网搜索引擎");//修改title值
+            //加载价格信息
+            $("#priceContent").css('display', 'none');
+            loadPrice(searchKeyWords);
+            $("#keywords").val(searchKeyWords);
+            $(document).attr("title", searchKeyWords + "-快查-315快查物联网搜索引擎");//修改title值
         }
 
         $("#search").click(function () {
             var keywords = $("#keywords").val();
             search(keywords, 0, 0);
             //加载广告
-            loadAdvice(searchKeyWords);
+            $("#advice").css('display','none');
+            loadAdvice(keywords);
+            //加载价格信息
+            $("#priceContent").css('display', 'none');
+            loadPrice(keywords);
+
             $(document).attr("title", keywords + "-快查-315快查物联网搜索引擎");//修改title值
 
         })
@@ -294,6 +280,7 @@
 
     }
 
+    //加载广告信息
     function loadAdvice(keywords){
         $.ajax({
             url: '../advice',
@@ -302,7 +289,36 @@
                 keywords: keywords
             },
             success: function (result) {
-                $("#advice").html(result);
+                if(result.length>0){
+                    $("#advice").html(result);
+                    $("#advice").css('display','block');
+                }
+            }
+        })
+    }
+
+    //加载价格信息
+    function loadPrice(keywords){
+        $.ajax({
+            url: '../smallList',
+            type: "post",
+            data: {
+                keywords: keywords
+            },
+            success: function (result) {
+                var dataObj = eval("(" + result + ")");
+                var html = '';
+                for (var i = 0; i < dataObj.length; i++) {
+                    html+="<tr>";
+                    html+="<td>"+dataObj[i].brand+"<br/> <span>"+dataObj[i].barCode+"</span></td>";
+                    html+="<td>"+dataObj[i].agencyPrice+"</td>";
+                    html+="<td>"+dataObj[i].sellPrice+"</td>";
+                    html+="</tr>";
+                }
+                $("#priceList").html(html);
+                if(dataObj.length>0){
+                    $("#priceContent").css('display', 'block');
+                }
             }
         })
     }

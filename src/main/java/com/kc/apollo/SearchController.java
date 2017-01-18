@@ -3,6 +3,7 @@ package com.kc.apollo;
 import com.google.gson.Gson;
 import com.kc.apollo.index.LuceneIndexHolder;
 import com.kc.apollo.lucene.LuceneSearchManager;
+import com.kc.apollo.model.PriceModel;
 import com.kc.apollo.model.SearchObject;
 import com.kc.apollo.model.SearchResult;
 import com.kc.apollo.spider.fixer.BaiduRealTimeWorker;
@@ -148,11 +149,35 @@ public class SearchController {
                 break;
             }
         }
-
         return result;
     }
 
     //TODO移动端广告，type=2,针对移动端广告会进行缓存优化
+
+    //加载具体的商品数据信息
+    @RequestMapping(value="/smallList",method = RequestMethod.POST)
+    @ResponseBody
+    public String smallList(SearchObject searchObject) throws Exception {
+
+        String keywords = searchObject.getKeywords();
+        List<String> keyWordsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
+        List<PriceModel> resultList = new ArrayList<>();
+        for(String str : keyWordsList){
+            String sql = "select brand, agency_price, sell_price, barcode from apollo_brand_price where keyword=? limit 0, 3";
+            List<DBTypes> list = Arrays.asList(DBTypes.STRING);
+            Object[] objects = new Object[]{str};
+            Object[][] results = DBHelper.getInstance().queryResultFromDatabase(sql, list, objects);
+            for(Object[] objects1 : results){
+                PriceModel priceModel = new PriceModel();
+                priceModel.setBrand((String)objects1[0]);
+                priceModel.setAgencyPrice((String)objects1[1]);
+                priceModel.setSellPrice((String) objects1[2]);
+                priceModel.setBarCode((String) objects1[3]);
+                resultList.add(priceModel);
+            }
+        }
+        return new Gson().toJson(resultList);
+    }
 
 
     private void insertSearchKeyWordsIntoDatabse(String keywords, String resultFlag){
