@@ -95,33 +95,30 @@ public class SearchController {
                 searchItemSet.add(item);
             }
             searchResult.setSearchItemSet(searchItemSet);
+
+            //结果集不包含条数才需要进行重新计算
+            if(searchObject.getTotalResult()==0) {
+                sql = "select count(uuid) as totalCount from apollo_html_content_collection where uuid in(" + questionMark + ")";
+                ps = connection.prepareStatement(sql);
+                for(int i =0 ; i<strings.length; i++){
+                    ps.setString(i+1, strings[i]);
+                }
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    int count = rs.getInt("totalCount");
+                    searchResult.setTotalResult(count);
+                }
+
+                saveSearchFlag = true;
+            }
         }
 
-        //结果集不包含条数才需要进行重新计算
-        if(searchObject.getTotalResult()==0) {
-            sql = "select count(uuid) as totalCount from apollo_html_content_collection where uuid in(" + questionMark + ")";
-            ps = connection.prepareStatement(sql);
-            for(int i =0 ; i<strings.length; i++){
-                ps.setString(i+1, strings[i]);
-            }
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                int count = rs.getInt("totalCount");
-                searchResult.setTotalResult(count);
-            }
-
-            saveSearchFlag = true;
-        }
         long end = System.currentTimeMillis();
         long timeCost = end-start;
         searchResult.setExecuteTime(timeCost);
         logger.info("\""+keywords+"\"的分词解析耗时:" + timeCost+"毫秒");
 
         //如果此处从315快查数据依然为空，我们则用fixer包下的搜索来进行结果替代
-        if(searchResult.getSearchItemSet()==null || searchResult.getSearchItemSet().size()== 0){
-            searchResult = new BaiduRealTimeWorker().baiduWorker(keywords);
-            hasResult = "N";
-        }
 
 
         //将搜索词保存到数据库内
