@@ -163,7 +163,7 @@ public class SearchController {
         List<String> keyWordsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
         List<PriceModel> resultList = new ArrayList<>();
         for(String str : keyWordsList){
-            String sql = "select brand, agency_price, sell_price, barcode from apollo_brand_price where keyword=? limit 0, 3";
+            String sql = "select brand, agency_price, sell_price, barcode from apollo_brand_price where keyword=?";
             List<DBTypes> list = Arrays.asList(DBTypes.STRING);
             Object[] objects = new Object[]{str};
             Object[][] results = DBHelper.getInstance().queryResultFromDatabase(sql, list, objects);
