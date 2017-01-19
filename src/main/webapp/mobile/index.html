@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
@@ -6,7 +7,8 @@
   <title>【快查-315快查】物联网大数据搜索引擎！</title>
   <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
   <link rel="stylesheet" href="css/zxmobile.css"/>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+    <link href="../css/bootstrap-typeahead.css" rel="stylesheet" type="text/css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
 <body>
 <div class="headersy">
   <div class="am-g">
@@ -23,10 +25,9 @@
 				<input type="text"  class="se-input" id="keywords" value="请输入品牌、企业名、产品名、条码号等信息" onFocus="if(this.value=='请输入品牌、企业名、产品名、条码号等信息')this.value=''" onBlur="if(this.value=='')this.value="请输入品牌、产品名、企业名等关键词" />
 			</div>
 			<div class="se-inner">
-				
-				<input type="button" class="se-bn" value="搜索" id="search">
+				<input type="button" class="se-bn" id="search" value="搜索"/>
 			</div>
-			<span class="loading"><i class="am-icon-spinner am-icon-pulse"></i> 数据检索中...</span>
+
 		</form>
 	</div>
 </div>
@@ -56,4 +57,28 @@
 
 </div>
 </body>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/bootstrap-typehead.js"></script>
+<script type="text/javascript" src="../js/global.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#search").click(function () {
+            var keywords = $("#keywords").val();
+            window.location.href = "result.html?" + keywords;
+        })
+
+
+        //Auto complete
+        $('#keywords').typeahead({
+            source: function (query, process) {
+                var parameter = {query: query};
+                $.post('/autoComplete', parameter, function (data) {
+                    process(eval("(" + data + ")"));
+                });
+            }
+        });
+    })
+
+
+</script>
 </html>
