@@ -25,7 +25,7 @@ public class LuceneIndexHolder {
 
     private static Directory directory = null;
 
-    //获得Lucene工作目录
+    //
     public Directory getDirectory(){
         if(directory == null){
             try {

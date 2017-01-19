@@ -156,7 +156,7 @@
         window.location.href = "result.html?" + keywords;
     })
 
-    $.get("/news", function (data) {
+    $.get("/apollo/news", function (data) {
         var dataObj = eval("(" + data + ")");
         var html = '';
         for (var i = 0; i < dataObj.length; i++) {
@@ -177,7 +177,7 @@
         $("#news").html(html);
     });
 
-    $.get("/searchKey", function (data) {
+    $.get("/apollo/searchKey", function (data) {
         var html = '';
         var dataObj = eval("(" + data + ")");
         for (var i = 0; i < dataObj.length; i++) {
@@ -191,7 +191,7 @@
     $('#keywords').typeahead({
         source: function (query, process) {
             var parameter = {query: query};
-            $.post('/autoComplete', parameter, function (data) {
+            $.post('/apollo/autoComplete', parameter, function (data) {
                 process(eval("(" + data + ")"));
             });
         }

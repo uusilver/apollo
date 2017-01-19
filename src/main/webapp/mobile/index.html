@@ -72,7 +72,7 @@
         $('#keywords').typeahead({
             source: function (query, process) {
                 var parameter = {query: query};
-                $.post('/autoComplete', parameter, function (data) {
+                $.post('/apollo/autoComplete', parameter, function (data) {
                     process(eval("(" + data + ")"));
                 });
             }

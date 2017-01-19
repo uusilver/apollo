@@ -152,6 +152,28 @@ public class SearchController {
         return result;
     }
 
+    //广告的type决定了广告的类型,mobile端广告type=2
+    @RequestMapping(value="/mobileAdvice",method = RequestMethod.POST)
+    @ResponseBody
+    public String mobileAdvice(SearchObject searchObject) throws Exception {
+
+        String keywords = searchObject.getKeywords();
+        List<String> keyWordsList = WordSpliter.getInstance().getWordListAfterSplit(keywords);
+        String result = null;
+        for(String str : keyWordsList){
+            String sql = "select content from apollo_advices where keyword=? and type=2";
+            List<DBTypes> list = Arrays.asList(DBTypes.STRING);
+            Object[] objects = new Object[]{str};
+            Object[][] results = DBHelper.getInstance().queryResultFromDatabase(sql, list, objects);
+            if(results!=null && results.length>0 && results[0]!=null && results[0][0]!=null){
+                //数据库中查找到第一条数据，返回结果，跳出循环
+                result = (String)results[0][0];
+                break;
+            }
+        }
+        return result;
+    }
+
     //TODO移动端广告，type=2,针对移动端广告会进行缓存优化
 
     //加载具体的商品数据信息

@@ -39,15 +39,15 @@ public class LuceneSearchManager {
     }
 
     /**
-     * 搜索索引文件，提供多关键词搜索功能，且高亮关键词
-     * @param directory 索引区
-     * @param keywords 检索关键词
-     * @param getResultNo 获取结果数量
+     *
+     * @param directory
+     * @param keywords
+     * @param getResultNo
      * @throws IOException
      * @throws InvalidTokenOffsetsException
      */
     public Map<String, String> search(Directory directory, List<String> keywords, int getResultNo) throws IOException, InvalidTokenOffsetsException {
-        //搜索
+        //
         Map<String, String> map = new HashMap<>();
         Analyzer analyzer = new IKAnalyzer();
 
@@ -62,21 +62,21 @@ public class LuceneSearchManager {
                 Query query = parser.parse(keyword);
                 booleanQuery.add(query, BooleanClause.Occur.MUST);
             }
-            TopDocs topdocs = searcher.search(booleanQuery, getResultNo);// 查询前100条
+            TopDocs topdocs = searcher.search(booleanQuery, getResultNo);//
 
-            // 高亮
-            Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");// 高亮html格式
-            Fragmenter fragmenter = new SimpleFragmenter(100);// 设置最大片断为100
-            org.apache.lucene.search.highlight.Scorer score = new QueryScorer(booleanQuery);// 检索评份
-            Highlighter highlighter = new Highlighter(formatter, score);// 高亮显示类
-            highlighter.setTextFragmenter(fragmenter);// 设置格式
-//            System.out.println("查询结果总数---" + topdocs.totalHits);
+            //
+            Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");//
+            Fragmenter fragmenter = new SimpleFragmenter(100);//
+            org.apache.lucene.search.highlight.Scorer score = new QueryScorer(booleanQuery);//
+            Highlighter highlighter = new Highlighter(formatter, score);//
+            highlighter.setTextFragmenter(fragmenter);//
+//            System.out.println("Total hits" + topdocs.totalHits);
             ScoreDoc[] docs = topdocs.scoreDocs;
             for (ScoreDoc doc : docs) {
                 Document d = searcher.doc(doc.doc);
                 String content = d.get(LuceneIndexModel.TEXT);
                 TokenStream tokenStream = analyzer.tokenStream(LuceneIndexModel.TEXT, new StringReader(content));
-                String text = highlighter.getBestFragment(tokenStream, content);// 得到高亮显示后的内容
+                String text = highlighter.getBestFragment(tokenStream, content);//
                 map.put(d.get(LuceneIndexModel.UUID), text);
             }
         }

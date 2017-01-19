@@ -7,7 +7,7 @@ package com.kc.apollo.util;
 
 
 /**
- * 常用字符变量存放地
+ *
  *
  * @author Vani Li
  */

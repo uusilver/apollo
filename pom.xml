@@ -9,6 +9,7 @@
 
     <properties>
         <spring.version>4.1.1.RELEASE</spring.version>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
     </properties>
 
     <dependencies>
@@ -120,7 +121,7 @@
     </dependencies>
 
     <build>
-        <finalName>apollo</finalName>
+        <finalName>${project.artifactId}-${maven.build.timestamp}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
