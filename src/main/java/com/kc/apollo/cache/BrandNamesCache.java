@@ -34,7 +34,7 @@ public class BrandNamesCache {
                 listCache.add(str);
                 builder.insert(str);
             }
-            logger.info("缓存初始化完成...");
+            logger.info("缓存初始化完成，BrandName缓存数据:"+listCache.size());
         }
     }
     private BrandNamesCache(){
@@ -49,9 +49,23 @@ public class BrandNamesCache {
     }
 
     //获取查询对象
-    public Collection getListCache(String keywords){
+    public Collection matchStringByPrefix(String keywords){
         return builder.autoComplete(keywords);
     }
+
+    //
+    public List<String> getListCacheByStringStarts(String keywords){
+        List<String> result = new ArrayList<>();
+        stop:for(String s : listCache){
+            if(s.contains(keywords)){
+                result.add(s);
+                if (result.size() == SIZE)
+                    break stop;
+            }
+        }
+        return result;
+    }
+
 
 
     //爬虫使用
