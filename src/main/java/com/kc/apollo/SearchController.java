@@ -143,7 +143,7 @@ public class SearchController {
             List<DBTypes> list = Arrays.asList(DBTypes.STRING);
             Object[] objects = new Object[]{str};
             Object[][] results = DBHelper.getInstance().queryResultFromDatabase(sql, list, objects);
-            if(results[0]!=null && results[0][0]!=null){
+            if(results.length>0 && results!=null && results[0]!=null && results[0][0]!=null){
                 //数据库中查找到第一条数据，返回结果，跳出循环
                 result = (String)results[0][0];
                 break;

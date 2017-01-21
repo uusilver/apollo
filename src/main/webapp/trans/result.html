@@ -217,6 +217,11 @@
                 $("#search").trigger('click');
             }
         });
+
+        $("#keywords").change(function(){
+            $("#search").trigger('click');
+        });
+
         var keywords = window.location.href.split("?")[1];
 
         //******************搜索方法区开始***************************************************************

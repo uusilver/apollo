@@ -187,6 +187,8 @@
         $("#searchHotKeys").html(html);
     });
 
+
+
     //Auto complete
     $('#keywords').typeahead({
         source: function (query, process) {
@@ -195,7 +197,10 @@
                 process(eval("(" + data + ")"));
             });
         }
-    });
+    }).on('typeahead:selected', function (obj, datum) {
+        console.log(obj);
+        console.log(datum);
+    });;
 
     hideElement($('.dataList'), $('.searchInput'));
 </script>
@@ -209,6 +214,11 @@
                 $("#search").trigger('click');
             }
         });
+
+        $("#keywords").change(function(){
+            $("#search").trigger('click');
+        });
+
 
         $("#khxgd").css({"z-index": "10"});
         $("#kmtbd").css({"z-index": "9"});

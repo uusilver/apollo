@@ -19,7 +19,7 @@
 
 <!--搜索-->
 	<div class="search">
-		<form id="searchForm" action="jg.html">
+		<form id="searchForm" action="result.html">
 			
 			<div class="se-info">
 				<input type="text"  class="se-input" id="keywords" value="请输入品牌、企业名、产品名、条码号等信息" onFocus="if(this.value=='请输入品牌、企业名、产品名、条码号等信息')this.value=''" onBlur="if(this.value=='')this.value="请输入品牌、产品名、企业名等关键词" />
@@ -62,6 +62,18 @@
 <script type="text/javascript" src="../js/global.js"></script>
 <script type="text/javascript">
     $(function(){
+
+        $("body").keydown(function () {
+            if (event.keyCode == "13") {//keyCode=13是回车键
+                $("#search").trigger('click');
+            }
+        });
+
+        $("#keywords").change(function(){
+            $("#search").trigger('click');
+        });
+
+        
         $("#search").click(function () {
             var keywords = $("#keywords").val();
             window.location.href = "result.html?" + keywords;
