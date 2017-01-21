@@ -8,7 +8,7 @@
     <title>快查-315快查物联网搜索引擎！</title>
     <link href="../css/style.css" rel="stylesheet" type="text/css"/>
     <link href="../css/result.css" rel="stylesheet" type="text/css"/>
-    <link href="../css/bootstrap-typeahead.css" rel="stylesheet" type="text/css"/>
+    <link href="../css/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <link href="../css/showLoading.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
@@ -152,7 +152,7 @@
 </div>
 </body>
 <script type="text/javascript" src="../js/jquery.js"></script>
-<script type="text/javascript" src="../js/bootstrap-typehead.js"></script>
+<script type="text/javascript" src="../js/jquery-ui.js"></script>
 
 <script type="text/javascript" src="../js/global.js"></script>
 <script type="text/javascript" src="../js/pagination.js"></script>
@@ -255,15 +255,26 @@
 
         //******************搜索方法区结束***************************************************************
 
-        //Auto complete
-        $('#keywords').typeahead({
-            source: function (query, process) {
-                var parameter = {query: query};
-                $.post('/apollo/autoComplete', parameter, function (data) {
-                    process(eval("(" + data + ")"));
-                });
+        //auto complete
+        $( "#keywords" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax( {
+                    url: "/apollo/autoComplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        query: request.term
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                } );
+            },
+            minLength: 1,
+            select: function( event, ui ) {
+                $("#search").trigger('click');
             }
-        });
+        } );
 
     })
 

@@ -11,7 +11,7 @@
 心已推出二维码防伪积分系统、防伪防窜货系统、渠道管理系统、二维码防伪溯源系统、微信扫码通等高端行业防伪解决方案，315快查物联网大数据搜索引擎。"/>
     <link href="../css/style.css" rel="stylesheet" type="text/css"/>
     <link href="../css/index.css" rel="stylesheet" type="text/css"/>
-    <link href="../css/bootstrap-typeahead.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css">
 
 </head>
 <body>
@@ -131,7 +131,7 @@
 </div>
 </body>
 <script type="text/javascript" src="../js/jquery.js"></script>
-<script type="text/javascript" src="../js/bootstrap-typehead.js"></script>
+<script type="text/javascript" src="../js/jquery-ui.js"></script>
 <script type="text/javascript" src="../js/global.js"></script>
 <script type="text/javascript">
     $('.searchList').on('click', '.searchItem', function () {
@@ -188,20 +188,6 @@
     });
 
 
-
-    //Auto complete
-    $('#keywords').typeahead({
-        source: function (query, process) {
-            var parameter = {query: query};
-            $.post('/apollo/autoComplete', parameter, function (data) {
-                process(eval("(" + data + ")"));
-            });
-        }
-    }).on('typeahead:selected', function (obj, datum) {
-        console.log(obj);
-        console.log(datum);
-    });;
-
     hideElement($('.dataList'), $('.searchInput'));
 </script>
 
@@ -215,9 +201,27 @@
             }
         });
 
-        $("#keywords").change(function(){
-            $("#search").trigger('click');
-        });
+
+        //auto complete
+        $( "#keywords" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax( {
+                    url: "/apollo/autoComplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        query: request.term
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                } );
+            },
+            minLength: 1,
+            select: function( event, ui ) {
+                window.location.href = "result.html?" + ui.item.value;
+            }
+        } );
 
 
         $("#khxgd").css({"z-index": "10"});

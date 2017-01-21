@@ -16,7 +16,7 @@ import java.sql.SQLException;
 @Controller
 public class AutoCompleteController {
 
-    @RequestMapping(value="/autoComplete",method = RequestMethod.POST)
+    @RequestMapping(value="/autoComplete",method = RequestMethod.POST, produces="application/json;charset=UTF-8")
     @ResponseBody
     public String search(String query) throws SQLException, IOException {
         return new Gson().toJson(BrandNamesCache.getInstance().getListCache(query));
